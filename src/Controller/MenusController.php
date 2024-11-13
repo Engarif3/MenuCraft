@@ -2,71 +2,154 @@
 
 namespace App\Controller;
 
-// use App\Entity\Category;
-// use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Menu;
+use App\Entity\Category;
+use App\Form\MenuType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-// use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class MenusController extends AbstractController
 {
+    // Display the list of menus
     #[Route('/menus', name: 'app_menus')]
-    public function index(): JsonResponse
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/MenusController.php',
+        $menus = $entityManager->getRepository(Menu::class)->findAll();
+
+        return $this->render('menu/list.html.twig', [
+            'menus' => $menus,
         ]);
     }
 
-    #[Route('/menu/{id}', name: 'app_menu')]
-    public function menu($id): Response
-    {
-        return new Response("The id is $id");
-    }
-    #[Route('/menus-temp', name: 'app_menu')]
 
-    public function menuTemp(): Response
+    #[Route('/menu/create', name: 'app_menu_create')]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render("index.html.twig");
+        $menu = new Menu();
+        $form = $this->createForm(MenuType::class, $menu);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Capitalize the first letter of the menu name
+            $menuName = $menu->getName();
+            $menu->setName(ucfirst(strtolower($menuName))); // Capitalize first letter
+            // Persist the new menu
+            $entityManager->persist($menu);
+            $entityManager->flush();
+
+            // Add success flash message
+            $this->addFlash('success', 'Menu created successfully!');
+
+            // Redirect to the menu list page
+            return $this->redirectToRoute('app_menus');
+        }
+
+        return $this->render('menu/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
-    // #[Route('/api/category/create', name: 'api_category_create', methods: ['POST'])]
-    // public function createCategory(Request $request, EntityManagerInterface $entityManager): JsonResponse
+
+    // Display specific menu details by ID
+    #[Route('/menu/{id}', name: 'app_menu', requirements: ['id' => '\d+'])]
+    public function menu(EntityManagerInterface $entityManager, int $id): Response
+    {
+        $menu = $entityManager->getRepository(Menu::class)->find($id);
+
+        if (!$menu) {
+            throw $this->createNotFoundException('Menu not found');
+        }
+
+        return $this->render('menu/show.html.twig', [
+            'menu' => $menu,
+        ]);
+    }
+
+    #[Route('/menu/{id}/edit', name: 'app_menu_edit')]
+    // public function edit(int $id, Request $request, EntityManagerInterface $entityManager): Response
     // {
-    //     // Decode JSON data from the request
-    //     $data = json_decode($request->getContent(), true);
+    //     $menu = $entityManager->getRepository(Menu::class)->find($id);
 
-    //     // Check if 'name' field is provided in the request data
-    //     if (empty($data['name'])) {
-    //         return new JsonResponse(
-    //             ['error' => 'Category name is required'],
-    //             Response::HTTP_BAD_REQUEST
-    //         );
+    //     if (!$menu) {
+    //         throw $this->createNotFoundException('Menu not found');
     //     }
 
-    //     // Create a new Category entity and set the name
-    //     $category = new Category();
-    //     $category->setCategoryName($data['name']);
+    //     $form = $this->createForm(MenuType::class, $menu, ['is_edit' => true]);
+    //     $form->handleRequest($request);
 
-    //     // Save the new category to the database
-    //     try {
-    //         $entityManager->persist($category);
+    //     if ($form->isSubmitted() && $form->isValid()) {
     //         $entityManager->flush();
-    //     } catch (\Exception $e) {
-    //         // Handle potential database or persistence errors
-    //         return new JsonResponse(
-    //             ['error' => 'An error occurred while saving the category'],
-    //             Response::HTTP_INTERNAL_SERVER_ERROR
-    //         );
+    //         $this->addFlash('success', 'Menu updated successfully!');
+    //         return $this->redirectToRoute('app_menus', ['id' => $menu->getId()]);
     //     }
 
-    //     // Return a success response
-    //     return new JsonResponse(
-    //         ['message' => 'Category created successfully', 'category_id' => $category->getId()],
-    //         Response::HTTP_CREATED
-    //     );
+    //     return $this->render('menu/edit.html.twig', [
+    //         'form' => $form->createView(),
+    //         'menu' => $menu,
+    //     ]);
     // }
+
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $menu = $entityManager->getRepository(Menu::class)->find($id);
+
+        if (!$menu) {
+            throw $this->createNotFoundException('Menu not found');
+        }
+
+        $form = $this->createForm(MenuType::class, $menu, ['is_edit' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('image')->getData();  // Get uploaded file
+            $imageUrl = $request->request->get('image_url');  // Get image URL input
+
+            if ($imageFile instanceof UploadedFile) {
+                // Handle file upload
+                $destination = $this->getParameter('images_directory'); // Path to save images
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                $imageFile->move($destination, $newFilename);
+                $menu->setImage('/uploads/images/' . $newFilename);  // Store relative path or URL
+            } elseif (!empty($imageUrl)) {
+                // Use the provided URL
+                $menu->setImage($imageUrl);
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Menu updated successfully!');
+            return $this->redirectToRoute('app_menus');
+        }
+
+        return $this->render('menu/edit.html.twig', [
+            'form' => $form->createView(),
+            'menu' => $menu,
+        ]);
+    }
+
+
+    // Route to delete menu
+    #[Route('/menu/{id}/delete', name: 'app_menu_delete')]
+    public function delete(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $menu = $entityManager->getRepository(Menu::class)->find($id);
+
+        if (!$menu) {
+            throw $this->createNotFoundException('Menu not found');
+        }
+
+        // Remove the menu and flush changes
+        $entityManager->remove($menu);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Menu deleted successfully!');
+        return $this->redirectToRoute('app_menus');
+    }
 }

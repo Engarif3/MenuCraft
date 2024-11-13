@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Menu{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl font-bold text-center text-blue-500 mb-8">Edit Menu: {{ menu.name }}</h1>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <form method="POST" action="{{ path('app_menu_edit', {'id': menu.id}) }}" enctype="multipart/form-data">
+                {{ form_start(form) }}
+                
+                <div class="mb-4 font-semibold">
+                    {{ form_label(form.name, 'Menu Name') }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
+                </div>
+                
+                <div class="mb-4 font-semibold">
+                    {{ form_label(form.price, 'Price (€)') }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
+                </div>
+                
+                <div class="mb-4 font-semibold">
+                    {{ form_label(form.description, 'Description') }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
+                </div>
+
+                <div class="mb-4 font-semibold">
+                    {{ form_label(form.category, 'Category') }}
+                    {{ form_widget(form.category, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
+                </div>
+                
+               <!-- Image Upload or URL -->
+                <div class="mb-4 font-semibold">
+    <label for="menu_image" class="form-label">Upload Image or Enter Image URL</label>
+
+    <!-- File Upload Input -->
+    <div>
+        {{ form_widget(form.image, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
+    </div>
+
+    <!-- Image URL Input -->
+    <div class="mt-2">
+        <label for="image_url" class="form-label">Or Image URL</label>
+        <input type="url" id="image_url" name="image_url" class="form-input p-3 border rounded-md w-full" placeholder="Enter Image URL">
+    </div>
+</div>
+
+                <!-- Add flexbox for submit button alignment -->
+                <div class="flex justify-end items-center space-x-4 mt-4">
+                    <!-- Cancel button -->
+                    <a href="{{ path('app_menus') }}" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</a>
+
+                    <!-- Submit button (styled) -->
+                    {{ form_widget(form.save, {'attr': {'class': 'bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition'}}) }}
+                </div>
+
+                {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
