@@ -1,0 +1,18 @@
+{# templates/category/edit.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+    <h1>Edit Category</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.categoryName) }}
+        {{ form_row(form.save) }}  {# This will automatically render the button #}
+    {{ form_end(form) }}
+
+    <br><br>
+    <a href="{{ path('category_list') }}">Back to Category List</a>
+{% endblock %}
+

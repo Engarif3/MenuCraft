@@ -1,0 +1,23 @@
+{# templates/category/list.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Category List{% endblock %}
+
+{% block body %}
+    <h1>Category List</h1>
+
+    <ul>
+        {% for category in categories %}
+            <li>
+                {{ category.categoryName }}
+                <a href="{{ path('category_edit', {'id': category.id}) }}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{{ path('category_delete', {'id': category.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this category?')">Delete</a>
+            </li>
+        {% else %}
+            <p>No categories found.</p>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('category_create') }}" class="btn btn-success">Create New Category</a>
+{% endblock %}
