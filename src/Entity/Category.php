@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: "category", uniqueConstraints: [new ORM\UniqueConstraint(name: "category_name_unique", columns: ["categoryName"])])]
-#[UniqueEntity(fields: ['categoryName'], message: 'This category name is already in use.')]
+#[UniqueEntity(fields: ['categoryName'], message: 'This category name already exists.')]
 class Category
 {
     #[ORM\Id]

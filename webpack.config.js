@@ -10,7 +10,7 @@ Encore
   .enableSingleRuntimeChunk()
 
   // Add your main JavaScript entry point
-  .addEntry("app", "./assets/app.js") // The path to your JavaScript file
+  .addEntry("app", "./assets/app.js")
 
   // Enable SCSS or CSS support (if you're using SCSS or plain CSS)
   .enableSassLoader()
@@ -28,6 +28,14 @@ Encore
   .cleanupOutputBeforeBuild()
 
   // Add the Tailwind CSS file as a style entry (Optional)
-  .addStyleEntry("styles", "./assets/styles/app.css"); // The path to your CSS file
+  .addStyleEntry("styles", "./assets/styles/app.css");
+
+// If we're in development mode, enable Hot Module Replacement (HMR)
+if (!Encore.isProduction()) {
+  Encore.configureDevServerOptions((options) => {
+    options.hot = true;
+    options.liveReload = true;
+  });
+}
 
 module.exports = Encore.getWebpackConfig();
