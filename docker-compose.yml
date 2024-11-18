@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  symfony:
+    build:
+      context: .
+    container_name: symfony-app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql://root:@mysql:3306/restaurantManagement?serverVersion=8.0.32&charset=utf8mb4
+    depends_on:
+      - mysql
+    networks:
+      - restaurant-management
+
+  mysql:
+    # image: mysql:8.0
+    image: mysql:8.0.32
+    container_name: mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=restaurantManagement
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - restaurant-management
+
+networks:
+  restaurant-management:
+    driver: bridge
+
+volumes:
+  mysql-data:

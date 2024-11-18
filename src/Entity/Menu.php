@@ -25,6 +25,7 @@ class Menu
 
     #[ORM\ManyToOne(targetEntity: Category::class)]
     #[ORM\JoinColumn(nullable: false)]
+
     private ?Category $category = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
