@@ -6,7 +6,9 @@
     <h1 class="text-4xl font-bold text-center text-gray-800 mt-12">Create Menu</h1>
 
     <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-8">
-        {{ form_start(form) }}
+        {% if categories|length > 0 %}
+            {{ form_start(form) }}
+            
             <div class="mb-6">
                 <label for="{{ form.name.vars.id }}" class="block text-lg font-medium text-gray-700">{{ form_label(form.name) }}</label>
                 <div class="mt-2">
@@ -48,7 +50,9 @@
             </div>
 
             <div class="mb-6">
-                <label for="{{ form.category.vars.id }}" class="block text-lg font-medium text-gray-700">{{ form_label(form.category) }}</label>
+                <label for="{{ form.category.vars.id }}" class="block text-lg font-medium text-gray-700">
+                    {{ form_label(form.category) }}
+                </label>
                 <div class="mt-2">
                     {{ form_widget(form.category, {'attr': {'class': 'form-input block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}}) }}
                 </div>
@@ -60,6 +64,15 @@
             <div class="text-center">
                 {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50'}}) }}
             </div>
-        {{ form_end(form) }}
+            
+            {{ form_end(form) }}
+        {% else %}
+            <div class="text-center">
+                <p class="text-lg text-gray-500">No categories available. <a href="{{ path('category_create') }}" class="text-indigo-500 underline">Create a category first</a>.</p>
+                <a href="{{ path('category_create') }}" class="btn btn-primary mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+                    Create Category
+                </a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Menu;
 use App\Form\CategoryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,17 +15,28 @@ class CategoryController extends AbstractController
 {
 
     // Route to display all categories
-    #[Route('/category/list', name: 'category_list')]
+    #[Route('/category', name: 'category_list')]
     public function list(EntityManagerInterface $entityManager): Response
     {
-        // Get all categories from the database
+        // Fetch all categories
         $categories = $entityManager->getRepository(Category::class)->findAll();
 
-        // Render the category list template and pass the categories
+        // For each category, fetch the associated menus
+        $categoriesWithMenus = [];
+        foreach ($categories as $category) {
+            $menus = $entityManager->getRepository(Menu::class)->findBy(['category' => $category]);
+            $categoriesWithMenus[] = [
+                'category' => $category,
+                'menus' => $menus
+            ];
+        }
+
+        // Pass categories with menus to the template
         return $this->render('category/list.html.twig', [
-            'categories' => $categories,
+            'categoriesWithMenus' => $categoriesWithMenus,
         ]);
     }
+
 
     #[Route('/category/create', name: 'category_create')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
@@ -105,25 +117,33 @@ class CategoryController extends AbstractController
 
     // Delete route
     #[Route('/category/delete/{id}', name: 'category_delete')]
-    public function delete(int $id, EntityManagerInterface $entityManager): Response
+    public function deleteCategory(int $id, EntityManagerInterface $entityManager): Response
     {
-        // Find the category by id
+        // Fetch the category by ID
         $category = $entityManager->getRepository(Category::class)->find($id);
 
-        // Check if category exists
+        // If category not found, redirect to the list page with an error message
         if (!$category) {
-            // If the category doesn't exist, throw a 404 error
-            throw $this->createNotFoundException('Category not found');
+            $this->addFlash('error', 'Category not found.');
+            return $this->redirectToRoute('category_list');
         }
 
-        // Remove the category from the database
+        // Get the associated menus for the category
+        $menus = $entityManager->getRepository(Menu::class)->findBy(['category' => $category]);
+
+        // Delete all associated menus first (if any)
+        foreach ($menus as $menu) {
+            $entityManager->remove($menu);
+        }
+
+        // Now, delete the category
         $entityManager->remove($category);
+
+        // Flush the changes to the database
         $entityManager->flush();
 
-        // Add a flash message to notify the user
-        $this->addFlash('success', 'Category deleted successfully!');
-
-        // Redirect to the category creation page
+        // Redirect to the category list page after successful deletion
+        $this->addFlash('success', 'Category and its associated menus deleted successfully.');
         return $this->redirectToRoute('category_list');
     }
 }

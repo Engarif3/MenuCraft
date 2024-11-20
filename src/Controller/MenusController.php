@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Repository\CategoryRepository;
 
 class MenusController extends AbstractController
 {
@@ -28,12 +29,14 @@ class MenusController extends AbstractController
 
 
     #[Route('/menu/create', name: 'app_menu_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
     {
         $menu = new Menu();
         $form = $this->createForm(MenuType::class, $menu);
 
         $form->handleRequest($request);
+        // Fetch all existing categories
+        $categories = $categoryRepository->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -53,6 +56,7 @@ class MenusController extends AbstractController
 
         return $this->render('menu/create.html.twig', [
             'form' => $form->createView(),
+            'categories' => $categories,
         ]);
     }
 
