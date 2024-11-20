@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Menu;
+use App\Entity\Dish;
 use App\Entity\Category;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -14,13 +14,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MenuType extends AbstractType
+class DishType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Menu Name',
+                'label' => 'Dish Name',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
@@ -29,7 +29,7 @@ class MenuType extends AbstractType
                 'label' => 'Price',
             ])
             ->add('image', FileType::class, [
-                'label' => 'Menu Image',
+                'label' => 'Dish Image',
                 'mapped' => false, // Handle the file separately
                 'required' => false,
             ])
@@ -42,11 +42,11 @@ class MenuType extends AbstractType
         // Dynamically change the button label depending on the context (edit or create)
         if ($options['is_edit']) {
             $builder->add('save', SubmitType::class, [
-                'label' => 'Update Menu',
+                'label' => 'Update Dish',
             ]);
         } else {
             $builder->add('save', SubmitType::class, [
-                'label' => 'Create Menu',
+                'label' => 'Create Dish',
             ]);
         }
     }
@@ -54,7 +54,7 @@ class MenuType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Menu::class,
+            'data_class' => Dish::class,
             'is_edit' => false, // Ensure this is lowercase 'is_edit'
         ]);
     }

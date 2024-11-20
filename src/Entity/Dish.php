@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\MenuRepository;
+use App\Repository\DishRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MenuRepository::class)]
-class Menu
+#[ORM\Entity(repositoryClass: DishRepository::class)]
+class Dish
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\Menu;
+use App\Entity\Dish;
 use App\Form\CategoryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,19 +21,19 @@ class CategoryController extends AbstractController
         // Fetch all categories
         $categories = $entityManager->getRepository(Category::class)->findAll();
 
-        // For each category, fetch the associated menus
-        $categoriesWithMenus = [];
+        // For each category, fetch the associated dishes
+        $categoriesWithDishes = [];
         foreach ($categories as $category) {
-            $menus = $entityManager->getRepository(Menu::class)->findBy(['category' => $category]);
-            $categoriesWithMenus[] = [
+            $dishes = $entityManager->getRepository(Dish::class)->findBy(['category' => $category]);
+            $categoriesWithDishes[] = [
                 'category' => $category,
-                'menus' => $menus
+                'dishes' => $dishes
             ];
         }
 
-        // Pass categories with menus to the template
+        // Pass categories with dishes to the template
         return $this->render('category/list.html.twig', [
-            'categoriesWithMenus' => $categoriesWithMenus,
+            'categoriesWithDishes' => $categoriesWithDishes,
         ]);
     }
 
@@ -128,12 +128,12 @@ class CategoryController extends AbstractController
             return $this->redirectToRoute('category_list');
         }
 
-        // Get the associated menus for the category
-        $menus = $entityManager->getRepository(Menu::class)->findBy(['category' => $category]);
+        // Get the associated dishes for the category
+        $dishes = $entityManager->getRepository(Dish::class)->findBy(['category' => $category]);
 
-        // Delete all associated menus first (if any)
-        foreach ($menus as $menu) {
-            $entityManager->remove($menu);
+        // Delete all associated dishes first (if any)
+        foreach ($dishes as $dish) {
+            $entityManager->remove($dish);
         }
 
         // Now, delete the category
@@ -143,7 +143,7 @@ class CategoryController extends AbstractController
         $entityManager->flush();
 
         // Redirect to the category list page after successful deletion
-        $this->addFlash('success', 'Category and its associated menus deleted successfully.');
+        $this->addFlash('success', 'Category and its associated dishes deleted successfully.');
         return $this->redirectToRoute('category_list');
     }
 }

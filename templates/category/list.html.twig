@@ -3,7 +3,7 @@
 {% block title %}Category List{% endblock %}
 
 {% block body %}
-    <h1 class="text-4xl font-bold text-center text-blue-500 mt-12">Category List</h1>
+    <h1 class="text-4xl font-bold text-center text-blue-500 mt-12">List of Categories</h1>
 
     <!-- Category Table -->
     <div class="min-w-full flex justify-center items-center">
@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in categoriesWithMenus %}
+                {% for item in categoriesWithDishes %}
                     <tr>
                         <td class="border-b border-gray-200 py-2 px-4 font-semibold font-mono text-slate-600 ">{{ item.category.categoryName }}</td>
                         <td class="border-b border-gray-200 py-2 px-4">
@@ -23,7 +23,7 @@
                             <a href="{{ path('category_edit', {'id': item.category.id}) }}" class="btn btn-sm btn-primary mx-2">Edit</a>
 
                             <!-- Delete Button triggers modal -->
-                            <button onclick="showDeleteModal('{{ path('category_delete', {'id': item.category.id}) }}', {{ item.category.id }}, {{ item.menus|length }})" class="btn btn-sm btn-error mx-2">Delete</button>
+                            <button onclick="showDeleteModal('{{ path('category_delete', {'id': item.category.id}) }}', {{ item.category.id }}, {{ item.dishes|length }})" class="btn btn-sm btn-error mx-2">Delete</button>
                         </td>
                     </tr>
                 {% else %}
@@ -56,14 +56,14 @@
         let deleteUrl = '';
         let categoryId = '';
 
-        function showDeleteModal(url, id, menusCount) {
+        function showDeleteModal(url, id, dishesCount) {
             deleteUrl = url; // Store URL
             categoryId = id; // Store category ID
 
-            // Check if this category has associated menus
-            if (menusCount > 0) {
-                document.getElementById('modalMessage').innerText = "This category is associated with menus. Deleting this category will also delete all associated menus.";
-                document.getElementById('confirmDeleteBtn').setAttribute('onclick', `deleteCategoryWithMenus(${categoryId})`);
+            // Check if this category has associated dishes
+            if (dishesCount > 0) {
+                document.getElementById('modalMessage').innerText = "This category is associated with dishes. Deleting this category will also delete all associated dishes.";
+                document.getElementById('confirmDeleteBtn').setAttribute('onclick', `deleteCategoryWithDishes(${categoryId})`);
             } else {
                 document.getElementById('modalMessage').innerText = "Are you sure you want to delete this category?";
                 document.getElementById('confirmDeleteBtn').setAttribute('onclick', `deleteCategory(${categoryId})`);
@@ -81,9 +81,9 @@
             window.location.href = deleteUrl;
         }
 
-        function deleteCategoryWithMenus(id) {
-            // Use the same URL but now handle the deletion of both category and menus in the backend
-            window.location.href = deleteUrl; // This will trigger the deletion of both category and associated menus
+        function deleteCategoryWithDishes(id) {
+            // Use the same URL but now handle the deletion of both category and dishes in the backend
+            window.location.href = deleteUrl; // This will trigger the deletion of both category and associated dishes
         }
     </script>
 {% endblock %}

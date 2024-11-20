@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Menu{% endblock %}
+{% block title %}Edit dish{% endblock %}
 
 {% block body %}
     <div class="container mx-auto p-6">
-        <h1 class="text-4xl font-bold text-center text-blue-500 mb-8">Edit Menu: {{ menu.name }}</h1>
+        <h1 class="text-4xl font-bold text-center text-blue-500 mb-8">Edit dish: {{ dish.name }}</h1>
 
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <form method="POST" action="{{ path('app_menu_edit', {'id': menu.id}) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ path('app_dish_edit', {'id': dish.id}) }}" enctype="multipart/form-data">
                 {{ form_start(form) }}
                 
                 <div class="mb-4 font-semibold">
-                    {{ form_label(form.name, 'Menu Name') }}
+                    {{ form_label(form.name, 'dish Name') }}
                     {{ form_widget(form.name, {'attr': {'class': 'form-input p-3 border rounded-md w-full'}}) }}
                 </div>
                 
@@ -32,7 +32,7 @@
                 
                <!-- Image Upload or URL -->
                 <div class="mb-4 font-semibold">
-    <label for="menu_image" class="form-label">Upload Image or Enter Image URL</label>
+    <label for="dish_image" class="form-label">Upload Image or Enter Image URL</label>
 
     <!-- File Upload Input -->
     <div>
@@ -49,7 +49,7 @@
                 <!-- Add flexbox for submit button alignment -->
                 <div class="flex justify-end items-center space-x-4 mt-4">
                     <!-- Cancel button -->
-                    <a href="{{ path('app_menus') }}" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</a>
+                    <a href="{{ path('app_dishes') }}" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition">Cancel</a>
 
                     <!-- Submit button (styled) -->
                     {{ form_widget(form.save, {'attr': {'class': 'bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition'}}) }}
