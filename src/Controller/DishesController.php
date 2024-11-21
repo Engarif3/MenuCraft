@@ -133,4 +133,28 @@ class DishesController extends AbstractController
         $this->addFlash('success', 'dish deleted successfully!');
         return $this->redirectToRoute('app_dishes');
     }
+
+    //frontend api
+    #[Route('/api/dishes', name: 'api_dishes', methods: ['GET'])]
+    public function dishes_list(EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Fetch all dishes from the database
+        $dishes = $entityManager->getRepository(Dish::class)->findAll();
+
+        // Prepare the data in an array format
+        $dishesData = [];
+        foreach ($dishes as $dish) {
+            $dishesData[] = [
+                'id' => $dish->getId(),
+                'name' => $dish->getName(),
+                'price' => $dish->getPrice(),
+                'description' => $dish->getDescription(),
+                // 'image' => $dish->getImage() ? '/uploads/' . $dish->getImage() : null,
+                'image' => $dish->getImage() ? $dish->getImage() : null,
+            ];
+        }
+
+        // Return the data as a JSON response
+        return new JsonResponse($dishesData);
+    }
 }
