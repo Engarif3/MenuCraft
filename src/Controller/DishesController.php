@@ -28,6 +28,38 @@ class DishesController extends AbstractController
     }
 
 
+    // #[Route('/dish/create', name: 'app_dish_create')]
+    // public function create(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
+    // {
+    //     $dish = new Dish();
+    //     $form = $this->createForm(DishType::class, $dish);
+
+    //     $form->handleRequest($request);
+    //     // Fetch all existing categories
+    //     $categories = $categoryRepository->findAll();
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+
+    //         // Capitalize the first letter of the dish name
+    //         $dishName = $dish->getName();
+    //         $dish->setName(ucfirst(strtolower($dishName))); // Capitalize first letter
+    //         // Persist the new dish
+    //         $entityManager->persist($dish);
+    //         $entityManager->flush();
+
+    //         // Add success flash message
+    //         $this->addFlash('success', 'Food item created successfully!');
+
+    //         // Redirect to the dish list page
+    //         return $this->redirectToRoute('app_dishes');
+    //     }
+
+    //     return $this->render('dish/create.html.twig', [
+    //         'form' => $form->createView(),
+    //         'categories' => $categories,
+    //     ]);
+    // }
+
     #[Route('/dish/create', name: 'app_dish_create')]
     public function create(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
     {
@@ -35,14 +67,30 @@ class DishesController extends AbstractController
         $form = $this->createForm(DishType::class, $dish);
 
         $form->handleRequest($request);
+
         // Fetch all existing categories
         $categories = $categoryRepository->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle the image upload
+            $imageFile = $form->get('image')->getData(); // Get uploaded file
+
+            if ($imageFile) {
+                // Generate a unique file name to avoid conflicts
+                $destination = $this->getParameter('images_directory'); // Path to save images
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                // Move the file to the target directory
+                $imageFile->move($destination, $newFilename);
+
+                // Set the relative path or URL to store in the database
+                $dish->setImage('/uploads/images/' . $newFilename);
+            }
 
             // Capitalize the first letter of the dish name
             $dishName = $dish->getName();
             $dish->setName(ucfirst(strtolower($dishName))); // Capitalize first letter
+
             // Persist the new dish
             $entityManager->persist($dish);
             $entityManager->flush();
@@ -59,6 +107,7 @@ class DishesController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
 
 
     // Display specific dish details by ID

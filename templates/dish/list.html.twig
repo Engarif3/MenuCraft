@@ -9,15 +9,22 @@
         {% if dishes is empty %}
             <div class="text-center text-lg text-gray-500">No dish available.</div>
         {% else %}
-            <ul class="space-y-4">
+            <ul class="space-y-2">
                 {% for dish in dishes %}
-                    <li class="bg-white rounded-lg shadow-lg p-6 flex justify-between items-center">
-                        <div>
-                            <h3 class="text-2xl font-semibold text-gray-800">{{ dish.name }}</h3>
-                            <p class="text-sm text-gray-600">{{ dish.description }}</p>
-                        </div>
+                <div class="border border-slate-200 rounded-lg shadow-lg p-2">
+                    
+                    <li class=" flex justify-between items-center">
+                       
+                            <img
+                                class="size-24 object-cover rounded-lg"
+                                src="{{dish.image}}"
+                            />
+                    {# <p class="text-sm text-center px-8 w-7/12">{{ dish.description }}</p> #}
+                        <h3 class="text-2xl font-semibold text-center ">{{ dish.name }}</h3>
+                            
+                       
                         <div class="flex items-center space-x-4">
-                            <span class="text-xl text-green-500">{{ dish.price }}€</span>
+                            <span class="text-xl text-gray-700 font-bold">{{ dish.price }}€</span>
                             
                             <!-- View button -->
                             <a href="{{ path('app_dish', {'id': dish.id}) }}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition">View</a>
@@ -28,6 +35,7 @@
                             </button>
                         </div>
                     </li>
+                    </div>
                 {% endfor %}
             </ul>
         {% endif %}

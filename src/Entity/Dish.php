@@ -17,8 +17,11 @@ class Dish
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    // #[ORM\Column(length: 255)]
+    // private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
+
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $image = null;
