@@ -33,23 +33,23 @@ Ensure you have the following installed (If running on local machine instead of 
 
 ```bash
 git clone <paste repo link here >
-cd restaurant-management-backend
+cd restaurant-management
 ```
 
 ### 2. Build and Start Containers
 
 ```bash
-docker-compose up --build
+docker compose up
 
 ```
 
 ### 3. Access the Application
 
-API Base URL: http://0.0.0.0:8000  or  http://localhost:8000 
+API Base URL: http://0.0.0.0:8000 or http://localhost:8000
 
 ### 4. API Endpoints
 
-API Base URL: http://0.0.0.0:8000  or  http://localhost:8000 
+API Base URL: http://0.0.0.0:8000 or http://localhost:8000
 
 | HTTP Method | Endpoint                | Description                                                  |
 | ----------- | ----------------------- | ------------------------------------------------------------ |

@@ -16,6 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `restaurantManagement`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `restaurantmanagement` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+
+USE `restaurantManagement`;
+
+--
 -- Table structure for table `category`
 --
 
@@ -56,7 +64,7 @@ CREATE TABLE `dish` (
   PRIMARY KEY (`id`),
   KEY `IDX_957D8CB812469DE2` (`category_id`),
   CONSTRAINT `FK_957D8CB812469DE2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +73,7 @@ CREATE TABLE `dish` (
 
 LOCK TABLES `dish` WRITE;
 /*!40000 ALTER TABLE `dish` DISABLE KEYS */;
-INSERT INTO `dish` VALUES (11,7,'Fish cury','eqdqwdqw','/uploads/images/6741ec3a1b025.jpg',32.00);
+INSERT INTO `dish` VALUES (11,7,'Fish cury','eqdqwdqw','/uploads/images/674c107d88a19.jpg',32.00),(12,7,'Beef','Melbourne Renegades completed a fantastic turnaround in WBBL10 to clinch their first title after edging a rain-affected final against Brisbane Heat at the Melbourne Cricket Ground. At the heart of a fairytale finish to their campaign was an all-round performance from Hayley Matthews, who backed up her fortifying knock of 69 with wickets off successive deliveries in the second half of the match. Brisbane Heat, who were chasing an unprecedented third championship, fell seven short of the DLS-adjusted target of 98 from 12 overs.','/uploads/images/674c10dab8399.jpg',45.00);
 /*!40000 ALTER TABLE `dish` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-30 18:45:53
+-- Dump completed on 2024-12-01  8:51:47
