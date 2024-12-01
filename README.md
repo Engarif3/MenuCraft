@@ -60,25 +60,25 @@ docker-compose up --build
 
 API Base URL: http://localhost:8000
 
-## API Endpoints
+| HTTP Method | Endpoint                | Description                                                  |
+| ----------- | ----------------------- | ------------------------------------------------------------ |
+| GET         | `/dishes`               | Fetches a list of all dishes.                                |
+| POST        | `/dish/create`          | Creates a new dish.                                          |
+| GET         | `/dish/{id}`            | Fetches details of a specific dish by ID.                    |
+| PUT         | `/dish/{id}/edit`       | Updates a specific dish by ID.                               |
+| DELETE      | `/dish/{id}/delete`     | Deletes a specific dish by ID.                               |
+| GET         | `/api/dishes`           | Returns a JSON list of all dishes for the frontend.          |
+| GET         | `/category`             | Fetches a list of all categories.                            |
+| POST        | `/category/create`      | Creates a new category.                                      |
+| PUT         | `/category/edit/{id}`   | Updates a specific category by ID.                           |
+| DELETE      | `/category/delete/{id}` | Deletes a specific category by ID and its associated dishes. |
 
-| HTTP Method | Endpoint                | Description                                                  | Example Response                                                                                          |
-| ----------- | ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| GET         | `/dishes`               | Fetches a list of all dishes.                                | `[{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}]` |
-| POST        | `/dish/create`          | Creates a new dish.                                          | Success message or validation errors.                                                                     |
-| GET         | `/dish/{id}`            | Fetches details of a specific dish by ID.                    | `{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}`   |
-| PUT         | `/dish/{id}/edit`       | Updates a specific dish by ID.                               | Success message or validation errors.                                                                     |
-| DELETE      | `/dish/{id}/delete`     | Deletes a specific dish by ID.                               | Success message.                                                                                          |
-| GET         | `/api/dishes`           | Returns a JSON list of all dishes for the frontend.          | `[{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}]` |
-| GET         | `/category`             | Fetches a list of all categories.                            | HTML response showing categories and dishes.                                                              |
-| POST        | `/category/create`      | Creates a new category.                                      | Success message or validation errors.                                                                     |
-| PUT         | `/category/edit/{id}`   | Updates a specific category by ID.                           | Success message or validation errors.                                                                     |
-| DELETE      | `/category/delete/{id}` | Deletes a specific category by ID and its associated dishes. | Success message.                                                                                          |
+                                                                                 |
 
 ## 📞 Contact
 
 For any inquiries or issues, feel free to reach out:
 
 - **Name:** Md. Arifur Rahman
-- **Email:** [your-email@example.com](mailto:your-email@example.com)
-- **LinkedIn:** [Md. Arifur Rahman](https://www.linkedin.com/in/md-arifur-rahman)
+- **Email:** [arif.aust.eng@gmail.com](mailto:arif.aust.eng@gmail.com)
+- **LinkedIn:** [Md. Arifur Rahman](https://www.linkedin.com/in/engarif3/)
