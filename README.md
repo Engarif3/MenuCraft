@@ -14,13 +14,15 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 - **Backend Framework**: Symfony 6.4
 - **Database**: MariaDB 10.4
 - **Containerization**: Docker
-- **Frontend**: [Front-end repository] (https://github.com/Engarif3/Bistro-delight)
+- **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight)
 - **API Testing**: Postman or similar tools
 
 ## Prerequisites
 
-Ensure you have the following installed:
+Ensure you have the following installed (If running on local machine instead of container):
 
+- [PHP](https://www.php.net/)
+- [Symfony](https://symfony.com/)
 - [Docker](https://www.docker.com/)
 - [Composer](https://getcomposer.org/)
 - [Node.js](https://nodejs.org/) (if using for frontend)
@@ -45,14 +47,7 @@ docker-compose up --build
 
 API Base URL: http://localhost:8000
 
-```bash
-docker-compose up --build
-
-```
-
 ### 4. API Endpoints
-
-## API Endpoints
 
 API Base URL: http://localhost:8000
 
