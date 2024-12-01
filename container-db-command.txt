@@ -10,6 +10,7 @@ symfony server:stop --all
 docker exec -it symfony-app bash
 
 php bin/console doctrine:database:drop --force
+
 //After that, recreate the database:
 php bin/console doctrine:database:create
 
