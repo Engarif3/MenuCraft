@@ -4,10 +4,7 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 
 ## Features
 
-- CRUD operations for recipes (dishes)
-- Category management for menu items
-  [comment]: <> - Cart functionality for adding dishes and managing quantities
-  [comment]: <> - Payment processing
+- CRUD operations for dishes and categories
 - RESTful API implementation for front-end
 - Dockerized setup for development and production environments
 - MariaDB database integration
@@ -17,7 +14,7 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 - **Backend Framework**: Symfony 6.4
 - **Database**: MariaDB 10.4
 - **Containerization**: Docker
-- **Frontend**: React (not included in this repository; refer to the frontend repo)
+- **Frontend**: [Front-end repository] (https://github.com/Engarif3/Bistro-delight)
 - **API Testing**: Postman or similar tools
 
 ## Prerequisites
@@ -25,7 +22,6 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 Ensure you have the following installed:
 
 - [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
 - [Composer](https://getcomposer.org/)
 - [Node.js](https://nodejs.org/) (if using for frontend)
 
