@@ -58,21 +58,27 @@ docker-compose up --build
 
 ## API Endpoints
 
-| **HTTP Method** | **Endpoint**       | **Description**                            |
-| --------------- | ------------------ | ------------------------------------------ |
-| GET             | `/api/dishes`      | Retrieve a list of all dishes.             |
-| POST            | `/api/dishes`      | Create a new dish.                         |
-| GET             | `/api/dishes/{id}` | Retrieve details of a specific dish by ID. |
-| PUT             | `/api/dishes/{id}` | Update a specific dish by ID.              |
-| DELETE          | `/api/dishes/{id}` | Delete a specific dish by ID.              |
-| GET             | `/api/categories`  | Retrieve a list of all categories.         |
-| POST            | `/api/categories`  | Create a new category.                     |
-| GET             | `/api/cart`        | View the cart contents.                    |
-| POST            | `/api/cart`        | Add a dish to the cart.                    |
-| PUT             | `/api/cart/{id}`   | Update the quantity of a dish in the cart. |
-| DELETE          | `/api/cart/{id}`   | Remove a dish from the cart.               |
-| POST            | `/api/checkout`    | Proceed to payment and checkout.           |
+API Base URL: http://localhost:8000
 
-```
+## API Endpoints
 
-```
+| HTTP Method | Endpoint                | Description                                                  | Example Response                                                                                          |
+| ----------- | ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| GET         | `/dishes`               | Fetches a list of all dishes.                                | `[{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}]` |
+| POST        | `/dish/create`          | Creates a new dish.                                          | Success message or validation errors.                                                                     |
+| GET         | `/dish/{id}`            | Fetches details of a specific dish by ID.                    | `{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}`   |
+| PUT         | `/dish/{id}/edit`       | Updates a specific dish by ID.                               | Success message or validation errors.                                                                     |
+| DELETE      | `/dish/{id}/delete`     | Deletes a specific dish by ID.                               | Success message.                                                                                          |
+| GET         | `/api/dishes`           | Returns a JSON list of all dishes for the frontend.          | `[{"id":1,"name":"Pizza","price":10.5,"description":"Cheese Pizza","image":"/uploads/images/pizza.jpg"}]` |
+| GET         | `/category`             | Fetches a list of all categories.                            | HTML response showing categories and dishes.                                                              |
+| POST        | `/category/create`      | Creates a new category.                                      | Success message or validation errors.                                                                     |
+| PUT         | `/category/edit/{id}`   | Updates a specific category by ID.                           | Success message or validation errors.                                                                     |
+| DELETE      | `/category/delete/{id}` | Deletes a specific category by ID and its associated dishes. | Success message.                                                                                          |
+
+## 📞 Contact
+
+For any inquiries or issues, feel free to reach out:
+
+- **Name:** Md. Arifur Rahman
+- **Email:** [your-email@example.com](mailto:your-email@example.com)
+- **LinkedIn:** [Md. Arifur Rahman](https://www.linkedin.com/in/md-arifur-rahman)
