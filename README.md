@@ -30,7 +30,7 @@ Ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/restaurant-management-backend.git
+git clone <paste repo link here >
 cd restaurant-management-backend
 ```
 
