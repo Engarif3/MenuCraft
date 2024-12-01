@@ -45,11 +45,11 @@ docker-compose up --build
 
 ### 3. Access the Application
 
-API Base URL: http://localhost:8000
+API Base URL: http://0.0.0.0:8000  or  http://localhost:8000 
 
 ### 4. API Endpoints
 
-API Base URL: http://localhost:8000
+API Base URL: http://0.0.0.0:8000  or  http://localhost:8000 
 
 | HTTP Method | Endpoint                | Description                                                  |
 | ----------- | ----------------------- | ------------------------------------------------------------ |
