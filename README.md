@@ -1,6 +1,6 @@
 # Restaurant Management System (Backend)
 
-A RESTful API built with Symfony to manage restaurant operations, including handling dishes, categories, carts, and payments. This backend is dockerized for seamless setup and integrates with a React frontend for a complete user experience.
+A RESTful API built with Symfony to manage restaurant operations, including handling dishes, categories. This backend is dockerized for seamless setup and integrates with a React frontend for a complete user experience.
 
 ## Features
 
