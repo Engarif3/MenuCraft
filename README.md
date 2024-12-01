@@ -15,7 +15,7 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 ## Tech Stack
 
 - **Backend Framework**: Symfony 6.4
-- **Database**: MySQL 8
+- **Database**: MariaDB 10.4
 - **Containerization**: Docker
 - **Frontend**: React (not included in this repository; refer to the frontend repo)
 - **API Testing**: Postman or similar tools
@@ -36,4 +36,43 @@ Ensure you have the following installed:
 ```bash
 git clone https://github.com/your-username/restaurant-management-backend.git
 cd restaurant-management-backend
+```
+
+### 2. Build and Start Containers
+
+```bash
+docker-compose up --build
+
+```
+
+### 3. Access the Application
+
+API Base URL: http://localhost:8000
+
+```bash
+docker-compose up --build
+
+```
+
+### 4. API Endpoints
+
+## API Endpoints
+
+| **HTTP Method** | **Endpoint**       | **Description**                            |
+| --------------- | ------------------ | ------------------------------------------ |
+| GET             | `/api/dishes`      | Retrieve a list of all dishes.             |
+| POST            | `/api/dishes`      | Create a new dish.                         |
+| GET             | `/api/dishes/{id}` | Retrieve details of a specific dish by ID. |
+| PUT             | `/api/dishes/{id}` | Update a specific dish by ID.              |
+| DELETE          | `/api/dishes/{id}` | Delete a specific dish by ID.              |
+| GET             | `/api/categories`  | Retrieve a list of all categories.         |
+| POST            | `/api/categories`  | Create a new category.                     |
+| GET             | `/api/cart`        | View the cart contents.                    |
+| POST            | `/api/cart`        | Add a dish to the cart.                    |
+| PUT             | `/api/cart/{id}`   | Update the quantity of a dish in the cart. |
+| DELETE          | `/api/cart/{id}`   | Remove a dish from the cart.               |
+| POST            | `/api/checkout`    | Proceed to payment and checkout.           |
+
+```
+
 ```
