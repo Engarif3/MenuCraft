@@ -6,11 +6,11 @@ A RESTful API built with Symfony to manage restaurant operations, including hand
 
 - CRUD operations for recipes (dishes)
 - Category management for menu items
-- Cart functionality for adding dishes and managing quantities
-- Payment processing
-- RESTful API implementation
+  [comment]: <> - Cart functionality for adding dishes and managing quantities
+  [comment]: <> - Payment processing
+- RESTful API implementation for front-end
 - Dockerized setup for development and production environments
-- MySQL database integration
+- MariaDB database integration
 
 ## Tech Stack
 
