@@ -15,7 +15,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY . .
 
 # Install Symfony PHP dependencies
-RUN composer install --optimize-autoloader
+# RUN composer install --optimize-autoloader
+RUN composer install --no-scripts --no-autoloader
 
 # Make wait-for-it script executable
 COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
