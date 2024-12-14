@@ -34,7 +34,7 @@ CREATE TABLE `category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (7,'Salad');
+INSERT INTO `category` VALUES (7,'Salad'),(8,'Dessert'),(9,'Soup'),(10,'Pizza'),(11,'Noodle'),(12,'Burger');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ CREATE TABLE `dish` (
   PRIMARY KEY (`id`),
   KEY `IDX_957D8CB812469DE2` (`category_id`),
   CONSTRAINT `FK_957D8CB812469DE2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +73,7 @@ CREATE TABLE `dish` (
 
 LOCK TABLES `dish` WRITE;
 /*!40000 ALTER TABLE `dish` DISABLE KEYS */;
-INSERT INTO `dish` VALUES (11,7,'Fish cury','eqdqwdqw','/uploads/images/674c107d88a19.jpg',32.00),(12,7,'Beef','Melbourne Renegades completed a fantastic turnaround in WBBL10 to clinch their first title after edging a rain-affected final against Brisbane Heat at the Melbourne Cricket Ground. At the heart of a fairytale finish to their campaign was an all-round performance from Hayley Matthews, who backed up her fortifying knock of 69 with wickets off successive deliveries in the second half of the match. Brisbane Heat, who were chasing an unprecedented third championship, fell seven short of the DLS-adjusted target of 98 from 12 overs.','/uploads/images/674c10dab8399.jpg',45.00);
+INSERT INTO `dish` VALUES (11,12,'Vegetable Burger','A veggie burger or meatless burger is a hamburger made with a patty that does not contain meat, or the patty of such a hamburger. The patty may be made from ingredients like beans (especially soybeans and tofu), nuts, grains, seeds, or fungi such as mushrooms or mycoprotein.','/uploads/images/674c107d88a19.jpg',9.00),(12,12,'Chicken','A veggie burger or meatless burger is a hamburger made with a patty that does not contain meat, or the patty of such a hamburger. The patty may be made from ingredients like beans (especially soybeans and tofu), nuts, grains, seeds, or fungi such as mushrooms or mycoprotein.','/uploads/images/674c10dab8399.jpg',10.00),(13,9,'Thai soup','Thai Coconut Soup is an easy Asian-inspired soup recipe loaded with fresh vegetables in a rich, vegan coconut milk curry broth. It includes instructions for Instant Pot or stove.','/uploads/images/67536638ce529.jpg',15.00),(14,10,'Italian pizza','Flatbreads are some of the earliest forms of pizza, as breads with toppings can be found in many of the earliest food cultures. For instance, the Persian army in the 6th century BC ate flatbreads topped with cheese and dates under the command of Darius the Great. Carbo-loading – a tradition throughout history. \r\n\r\nThere are other references to pizza-like foods in some of the earliest histories, including the Aeneid, where the Trojans eat round bread topped with vegetables.','/uploads/images/675366f48c308.webp',12.00);
 /*!40000 ALTER TABLE `dish` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-01  8:51:47
+-- Dump completed on 2024-12-14 19:35:12
