@@ -198,8 +198,10 @@ jobs:
           #   sudo systemctl restart php8.2-fpm &&
           #   sudo systemctl restart nginx
           # "
-          # Stop existing PM2 process if it exists
+
+        # Stop existing PM2 process if it exists
           ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
 
-          # Start the application with PM2
-          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/app && pm2 start dist/index.html --name restaurant-management"
+        # Start the application with PM2
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/restaurant-management && pm2 start public/index.php --name Bistro_delight_aws"
+          
