@@ -321,10 +321,3 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
           "
-
-          # Step 3.5: Restart the application (if applicable)
-          ssh $EC2_USER@$EC2_HOST "
-            export PATH=\$PATH:/home/ubuntu/.local/share/fnm/bin &&
-            pm2 delete restaurant-management || true &&
-            pm2 start public/index.php --name restaurant-management
-          "
