@@ -338,7 +338,7 @@ jobs:
             sudo chown -R www-data:www-data ~/restaurant-management/public/css
           "
 
-          # Stop existing PM2 process if it exists
+          # Stop existing PM2 process if it exists #
           ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
 
           # Start the application with PM2
