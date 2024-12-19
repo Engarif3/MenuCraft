@@ -286,7 +286,9 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
             sudo chown -R www-data:www-data ~/restaurant-management/var/cache &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
+            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
+            sudo chmod -R 775 ~/restaurant-management/var/logs &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var/logs
           "
 
           # Step 3.2: Pull latest code
