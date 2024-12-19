@@ -321,6 +321,6 @@ jobs:
             npm run build
           "
 
-          # Restart the application with PM2
+          # #Restart the application with PM2
           ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
           ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/restaurant-management && pm2 start public/index.php --name restaurant-management"
