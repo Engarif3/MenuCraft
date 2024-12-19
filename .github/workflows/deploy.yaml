@@ -269,6 +269,12 @@ jobs:
             fi
           "
 
+          # Ensure permissions for public/build directory
+          ssh $EC2_USER@$EC2_HOST "
+            sudo chmod -R 775 ~/restaurant-management/public/build &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public/build
+          "
+
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
