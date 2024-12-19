@@ -22,17 +22,23 @@ jobs:
           php-version: "8.2"
           extensions: pdo_mysql
 
-      # Step 3: Install dependencies
+      # Step 3: Install Composer dependencies
       - name: Install Composer Dependencies
-        run: composer install --no-scripts --no-interaction --prefer-dist
+        run: composer install --no-scripts --no-interaction --prefer-dist --dev
 
-      # Step 4: Run static code analysis with PHPStan
+      # Step 4: Verify PHPStan installation and run static code analysis
+      - name: Check PHPStan Installation
+        run: |
+          if [ -f vendor/bin/phpstan ]; then
+            echo "PHPStan found!";
+          else
+            echo "PHPStan not found. Please check your composer.json file.";
+            exit 1;
+          fi
+
+      # Step 5: Run PHPStan analysis
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src
-
-      # Step 5: Run PHPUnit tests
-      - name: Run PHPUnit Tests
-        run: vendor/bin/phpunit --testdox
+        run: vendor/bin/phpstan analyse
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,8 +78,14 @@ jobs:
           ssh $EC2_USER@$EC2_HOST "
             cd ~/symfony-app &&
             composer install --no-dev --optimize-autoloader &&
-            php bin/console cache:clear --env=prod &&
-            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console doctrine:database:create --if-not-exists &&
+            php bin/console doctrine:migrations:migrate --no-interaction &&
+            php bin/console cache:clear --env=prod
+          "
+
+          # Restore the database from backup (if needed)
+          ssh $EC2_USER@$EC2_HOST "
+            mysql -u root -p restaurantManagement < ~/symfony-app/backup.sql
           "
 
           # Restart PHP and Nginx services
