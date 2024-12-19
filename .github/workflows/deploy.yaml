@@ -274,13 +274,18 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Step 3.1: Set correct permissions for the entire directory
+          # Step 3.1: Set Git safe directory configuration
           ssh $EC2_USER@$EC2_HOST "
-            # Set permissions for the entire restaurant-management directory
-            sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management
+            git config --global --add safe.directory /home/$EC2_USER/restaurant-management
           "
 
-          # Step 3.2: Pull the latest code
+          # Step 3.2: Set correct permissions for the entire directory
+          ssh $EC2_USER@$EC2_HOST "
+            sudo chmod -R 775 ~/restaurant-management &&
+            sudo chown -R www-data:www-data ~/restaurant-management
+          "
+
+          # Step 3.3: Pull the latest code
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             git reset --hard HEAD &&
@@ -288,7 +293,7 @@ jobs:
             git pull origin main
           "
 
-          # Step 3.3: Install dependencies and clear cache
+          # Step 3.4: Install dependencies and clear cache
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
