@@ -122,9 +122,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.18"
+          node-version: "18"
 
-      # Step 7: Install Node.js dependencies
+      # Step 7: Install NPM dependencies
       - name: Install NPM dependencies
         run: npm install
 
@@ -163,6 +163,15 @@ jobs:
               cd ~/restaurant-management && git pull origin main;
             else
               git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
+            fi
+          "
+
+          # Install PHP and Node.js on EC2 (if not already installed)
+          ssh $EC2_USER@$EC2_HOST "
+            # Install Node.js and npm if not already installed
+            if ! command -v npm &> /dev/null; then
+              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+              sudo apt-get install -y nodejs
             fi
           "
 
