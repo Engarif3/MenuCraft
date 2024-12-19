@@ -187,7 +187,7 @@ jobs:
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             npm install &&
-            npm run watch
+            npm run dev-server
           "
 
           # Restart PHP and Nginx services
