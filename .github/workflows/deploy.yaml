@@ -223,7 +223,7 @@ jobs:
           php-version: "8.2"
           extensions: pdo_mysql
 
-      # Step 3: Install dependencies
+      # Step 3: Install Composer dependencies
       - name: Install Composer Dependencies
         run: composer install --no-scripts --no-interaction --prefer-dist
 
@@ -231,21 +231,15 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src
 
-      # Step 5: Run PHPUnit tests (if needed)
-      #- name: Run PHPUnit Tests
-      #  run: vendor/bin/phpunit --testdox
-
-      # Step 6: Set up Node.js for Tailwind build
-      - name: Set up Node.js
+      # Step 5: Install NPM dependencies
+      - name: Install NPM dependencies
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-
-      # Step 7: Install NPM dependencies
       - name: Install NPM dependencies
         run: npm install
 
-      # Step 8: Build Tailwind CSS
+      # Step 6: Build Tailwind CSS
       - name: Build Tailwind CSS
         run: npm run build
 
@@ -258,7 +252,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Configure SSH for EC2 deployment
+      # Step 2: Configure SSH
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
@@ -274,30 +268,46 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Step 3.1: Ensure the Proxies directory exists and set correct permissions
+          # SSH into EC2 to deploy the application
           ssh $EC2_USER@$EC2_HOST "
-            sudo mkdir -p /home/ubuntu/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/restaurant-management &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var/cache &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var/cache/dev &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var/cache/dev/doctrine &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var/cache/dev/doctrine/orm &&
-            sudo chmod -R 775 /home/ubuntu/restaurant-management/var/cache/dev/doctrine/orm/Proxies
-          "
-
-          # Step 3.2: Pull the latest code
-          ssh $EC2_USER@$EC2_HOST "
+            # Set correct permissions for the entire directory
+            sudo chmod -R 775 ~/restaurant-management &&
+            sudo chown -R ubuntu:www-data ~/restaurant-management &&
+            
+            # Ensure the var directories exist and have the correct permissions
+            sudo mkdir -p ~/restaurant-management/var/cache &&
+            sudo mkdir -p ~/restaurant-management/var/logs &&
+            sudo mkdir -p ~/restaurant-management/var/sessions &&
+            sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chown -R ubuntu:www-data ~/restaurant-management/var &&
+            
+            # Clear Symfony cache
             cd ~/restaurant-management &&
-            git reset --hard HEAD &&
-            git stash --include-untracked &&
+            php bin/console cache:clear --env=dev &&
+            php bin/console cache:clear --env=prod &&
+            
+            # Pull latest code on EC2
             git pull origin main
           "
 
-          # Step 3.3: Install dependencies and clear cache
+          # Install PHP and Node.js on EC2 (if not already installed)
           ssh $EC2_USER@$EC2_HOST "
+            # Install Node.js and npm if not already installed
+            if ! command -v npm &> /dev/null; then
+              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+              sudo apt-get install -y nodejs 
+            fi
+
+            # Install Composer dependencies and clear cache
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
             php bin/console cache:clear --env=prod &&
             php bin/console doctrine:migrations:migrate --no-interaction
+          "
+
+          # Build Tailwind CSS (on EC2)
+          ssh $EC2_USER@$EC2_HOST "
+            cd ~/restaurant-management &&
+            npm install &&
+            npm run build
           "
