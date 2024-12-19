@@ -231,21 +231,17 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src
 
-      # Step 5: Run PHPUnit tests (if needed)
-      #- name: Run PHPUnit Tests
-      #  run: vendor/bin/phpunit --testdox
-
-      # Step 6: Set up Node.js for Tailwind build
+      # Step 5: Set up Node.js for Tailwind build
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      # Step 7: Install NPM dependencies
+      # Step 6: Install NPM dependencies
       - name: Install NPM dependencies
         run: npm install
 
-      # Step 8: Build Tailwind CSS
+      # Step 7: Build Tailwind CSS
       - name: Build Tailwind CSS
         run: npm run build
 
@@ -274,41 +270,37 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Set correct permissions for public/css directory (use sudo for permissions)
+          # Clean up old deployment (remove public/css directory and other cached data)
           ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 777 ~/restaurant-management/public/css &&
-            sudo chown -R ubuntu:ubuntu ~/restaurant-management/public/css
+            sudo rm -rf ~/restaurant-management/public/css &&
+            sudo rm -rf ~/restaurant-management/var/cache &&
+            sudo rm -rf ~/restaurant-management/public/build
           "
 
-          # Forcefully remove the tailwind.css file (using sudo)
-          ssh $EC2_USER@$EC2_HOST "
-            sudo rm -f ~/restaurant-management/public/css/tailwind.css
-          "
-
-          # Pull latest code on EC2
+          # Clone or pull latest code
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
               cd ~/restaurant-management &&
-              # Stash any local changes to prevent merge issues
               git stash --include-untracked &&
-              # Clean the public/build folder to prevent conflicts
-              rm -rf public/build/* &&
               git pull origin main;
             else
               git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
             fi
           "
 
-          # Install PHP and Node.js on EC2 (if not already installed)
+          # Install PHP and Node.js on EC2 if not already installed
           ssh $EC2_USER@$EC2_HOST "
-            # Install Node.js and npm if not already installed
+            if ! command -v php &> /dev/null; then
+              sudo apt update &&
+              sudo apt install -y php8.2-cli php8.2-fpm php8.2-mysql unzip curl;
+            fi
             if ! command -v npm &> /dev/null; then
-              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
-              sudo apt-get install -y nodejs 
+              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&
+              sudo apt install -y nodejs;
             fi
           "
 
-          # Install dependencies and prepare the application (with dev dependencies)
+          # Install dependencies and prepare the application
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -316,31 +308,53 @@ jobs:
             php bin/console doctrine:migrations:migrate --no-interaction
           "
 
-          # Build Tailwind CSS (on EC2)
+          # Build Tailwind CSS on EC2
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             npm install &&
             npm run build
           "
 
-
-          # Set execute permissions on the necessary directories
-          ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
-
-          # Ensure the app directory has write permissions and create the necessary folders
+          # Set permissions
           ssh $EC2_USER@$EC2_HOST "
-            sudo mkdir -p ~/restaurant-management/public/build &&
             sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chmod -R 775 ~/restaurant-management/var/cache &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/prod &&
-            sudo chmod -R 775 ~/restaurant-management/public/css &&
-            sudo chown -R www-data:www-data ~/restaurant-management/public/css
+            sudo chown -R www-data:www-data ~/restaurant-management
           "
 
-          # Stop existing PM2 process if it exists #
-          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
+          # Configure NGINX
+          ssh $EC2_USER@$EC2_HOST "
+            sudo tee /etc/nginx/sites-available/restaurant-management <<EOF
+            server {
+                listen 80;
+                server_name ${EC2_HOST};
 
-          # Start the application with PM2
-          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/restaurant-management && pm2 start public/index.php --name restaurant-management"
+                root /home/ubuntu/restaurant-management/public;
+                index index.php index.html;
+
+                location / {
+                    try_files \$uri /index.php\$is_args\$args;
+                }
+
+                location ~ \.php\$ {
+                    include snippets/fastcgi-php.conf;
+                    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+                    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+                    include fastcgi_params;
+                }
+
+                location ~ /\.ht {
+                    deny all;
+                }
+            }
+EOF
+          "
+
+          # Enable site and reload NGINX
+          ssh $EC2_USER@$EC2_HOST "
+            sudo ln -sf /etc/nginx/sites-available/restaurant-management /etc/nginx/sites-enabled/ &&
+            sudo nginx -t &&
+            sudo systemctl reload nginx
+          "
+
