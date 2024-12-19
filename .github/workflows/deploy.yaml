@@ -322,7 +322,8 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chmod -R 775 ~/restaurant-management/var/cache &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/prod
+            sudo chmod -R 775 ~/restaurant-management/var/cache/prod &&
+            sudo chmod -R 775 ~/restaurant-management/public/css
           "
 
           # Stop existing PM2 process if it exists
