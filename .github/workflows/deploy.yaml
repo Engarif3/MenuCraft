@@ -276,14 +276,13 @@ jobs:
         run: |
           # Step 3.1: Reset permissions for problematic directories
           ssh $EC2_USER@$EC2_HOST "
-            # Create the logs directory if it does not exist
+            # Create necessary directories if they don't exist
+            sudo mkdir -p ~/restaurant-management/var/cache/dev &&
             sudo mkdir -p ~/restaurant-management/var/logs &&
-            sudo chmod -R 775 ~/restaurant-management/var/logs &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var/logs &&
-            sudo chmod -R 775 ~/restaurant-management/public &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public &&
+            
+            # Set correct permissions for cache, logs, and other directories
             sudo chmod -R 775 ~/restaurant-management/var &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var &&
+            sudo chown -R www-data:www-data ~/restaurant-management/var &&
             sudo chmod -R 775 ~/restaurant-management/var/cache &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine &&
