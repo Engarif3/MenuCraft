@@ -20,7 +20,7 @@
     "dev-server": "encore dev-server",
     "watch": "encore dev --watch",
     "hot": "encore dev --hot",
-    "build": "tailwindcss -o public/css/tailwind.css"
+    "build": "encore production --progress"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
