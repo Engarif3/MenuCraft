@@ -260,15 +260,6 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           ssh $EC2_USER@$EC2_HOST "
-            # Ensure correct permissions for deployment
-            sudo chmod -R 775 ~/restaurant-management ||
-            sudo mkdir -p ~/restaurant-management &&
-            sudo chmod -R 775 ~/restaurant-management &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management
-          "
-
-          # Pull or clone repository
-          ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
               cd ~/restaurant-management &&
               git stash --include-untracked &&
@@ -278,7 +269,6 @@ jobs:
             fi
           "
 
-          # Install dependencies and clear cache
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -286,17 +276,19 @@ jobs:
             php bin/console doctrine:migrations:migrate --no-interaction
           "
 
-          # Build Tailwind CSS
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             npm install &&
             npm run build
           "
 
-          # Ensure permissions for public and cache directories
           ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chmod -R 775 ~/restaurant-management/public &&
+            sudo chmod -R 775 ~/restaurant-management/var/cache &&
+            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
+            sudo chown -R www-data:www-data ~/restaurant-management/var &&
             sudo chown -R www-data:www-data ~/restaurant-management/public &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var
+            sudo chown -R www-data:www-data ~/restaurant-management/var/cache &&
+            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
           "
