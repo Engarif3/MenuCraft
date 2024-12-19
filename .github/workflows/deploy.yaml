@@ -30,7 +30,7 @@
 #       - name: Run PHPStan
 #         run: vendor/bin/phpstan analyse src
 
-#       # Step 5: Run PHPUnit tests
+#       # Step 5: Run PHPUnit tests (if needed)
 #       #- name: Run PHPUnit Tests
 #       #  run: vendor/bin/phpunit --testdox
 
@@ -68,10 +68,10 @@
 #             fi
 #           "
 
-#           # Install dependencies and prepare the application
+#           # Install dependencies and prepare the application (with dev dependencies)
 #           ssh $EC2_USER@$EC2_HOST "
 #             cd ~/restaurant-management &&
-#             composer install --no-dev --optimize-autoloader &&
+#             composer install --optimize-autoloader &&
 #             php bin/console cache:clear --env=prod &&
 #             php bin/console doctrine:migrations:migrate --no-interaction
 #           "
@@ -118,6 +118,20 @@ jobs:
       #- name: Run PHPUnit Tests
       #  run: vendor/bin/phpunit --testdox
 
+      # Step 6: Set up Node.js for Tailwind build
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.18"
+
+      # Step 7: Install Node.js dependencies
+      - name: Install NPM dependencies
+        run: npm install
+
+      # Step 8: Build Tailwind CSS
+      - name: Build Tailwind CSS
+        run: npm run build
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -158,6 +172,13 @@ jobs:
             composer install --optimize-autoloader &&
             php bin/console cache:clear --env=prod &&
             php bin/console doctrine:migrations:migrate --no-interaction
+          "
+
+          # Build Tailwind CSS (on EC2)
+          ssh $EC2_USER@$EC2_HOST "
+            cd ~/restaurant-management &&
+            npm install &&
+            npm run build
           "
 
           # Restart PHP and Nginx services
