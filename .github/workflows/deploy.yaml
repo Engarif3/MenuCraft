@@ -167,7 +167,7 @@ jobs:
             else
               git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
             fi
-        "
+          "
 
           # Install PHP and Node.js on EC2 (if not already installed)
           ssh $EC2_USER@$EC2_HOST "
