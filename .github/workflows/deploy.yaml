@@ -1,3 +1,87 @@
+# name: Test and Deploy Symfony App to EC2
+
+# on:
+#   push:
+#     branches: ["main"]
+#   pull_request:
+#     branches: ["main"]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # Step 1: Checkout the repository
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       # Step 2: Set up PHP
+#       - name: Setup PHP
+#         uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: "8.2"
+#           extensions: pdo_mysql
+
+#       # Step 3: Install dependencies
+#       - name: Install Composer Dependencies
+#         run: composer install --no-scripts --no-interaction --prefer-dist
+
+#       # Step 4: Run static code analysis with PHPStan
+#       - name: Run PHPStan
+#         run: vendor/bin/phpstan analyse src
+
+#       # Step 5: Run PHPUnit tests
+#       #- name: Run PHPUnit Tests
+#       #  run: vendor/bin/phpunit --testdox
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     steps:
+#       # Step 1: Checkout the repository
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       # Step 2: Configure SSH
+#       - name: Configure SSH
+#         env:
+#           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+#           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+#       # Step 3: Deploy to EC2
+#       - name: Deploy to EC2
+#         env:
+#           EC2_HOST: ${{ secrets.EC2_HOST }}
+#           EC2_USER: ${{ secrets.EC2_USER }}
+#         run: |
+#           # Pull latest code on EC2
+#           ssh $EC2_USER@$EC2_HOST "
+#             if [ -d ~/restaurant-management ]; then
+#               cd ~/restaurant-management && git pull origin main;
+#             else
+#               git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
+#             fi
+#           "
+
+#           # Install dependencies and prepare the application
+#           ssh $EC2_USER@$EC2_HOST "
+#             cd ~/restaurant-management &&
+#             composer install --no-dev --optimize-autoloader &&
+#             php bin/console cache:clear --env=prod &&
+#             php bin/console doctrine:migrations:migrate --no-interaction
+#           "
+
+#           # Restart PHP and Nginx services
+#           ssh $EC2_USER@$EC2_HOST "
+#             sudo systemctl restart php8.2-fpm &&
+#             sudo systemctl restart nginx
+#           "
+
 name: Test and Deploy Symfony App to EC2
 
 on:
@@ -30,7 +114,7 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src
 
-      # Step 5: Run PHPUnit tests
+      # Step 5: Run PHPUnit tests (if needed)
       #- name: Run PHPUnit Tests
       #  run: vendor/bin/phpunit --testdox
 
@@ -68,10 +152,10 @@ jobs:
             fi
           "
 
-          # Install dependencies and prepare the application
+          # Install dependencies and prepare the application (with dev dependencies)
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
-            composer install --no-dev --optimize-autoloader &&
+            composer install --optimize-autoloader &&
             php bin/console cache:clear --env=prod &&
             php bin/console doctrine:migrations:migrate --no-interaction
           "
