@@ -276,6 +276,10 @@ jobs:
         run: |
           # Step 3.1: Reset permissions for problematic directories
           ssh $EC2_USER@$EC2_HOST "
+            # Create the logs directory if it does not exist
+            sudo mkdir -p ~/restaurant-management/var/logs &&
+            sudo chmod -R 775 ~/restaurant-management/var/logs &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var/logs &&
             sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public &&
             sudo chmod -R 775 ~/restaurant-management/var &&
@@ -286,9 +290,7 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
             sudo chown -R www-data:www-data ~/restaurant-management/var/cache &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
-            sudo chmod -R 775 ~/restaurant-management/var/logs &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var/logs
+            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
           "
 
           # Step 3.2: Pull latest code
@@ -318,4 +320,11 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
+          "
+
+          # Step 3.5: Restart the application (if applicable)
+          ssh $EC2_USER@$EC2_HOST "
+            export PATH=\$PATH:/home/ubuntu/.local/share/fnm/bin &&
+            pm2 delete restaurant-management || true &&
+            pm2 start public/index.php --name restaurant-management
           "
