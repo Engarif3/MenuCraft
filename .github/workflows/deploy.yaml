@@ -283,6 +283,10 @@ jobs:
             sudo chmod -R 775 ~/restaurant-management/var &&
             sudo chown -R ubuntu:www-data ~/restaurant-management/var &&
             
+            # Set permissions for the public/build directory
+            sudo chmod -R 775 ~/restaurant-management/public/build &&
+            sudo chown -R ubuntu:www-data ~/restaurant-management/public/build &&
+            
             # Stash local changes if any
             git stash -u &&
             
