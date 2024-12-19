@@ -278,6 +278,8 @@ jobs:
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
               cd ~/restaurant-management &&
+              # Stash any local changes to prevent merge issues
+              git stash --include-untracked &&
               # Clean the public/build folder to prevent conflicts
               rm -rf public/build/* &&
               git pull origin main;
