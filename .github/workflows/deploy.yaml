@@ -279,11 +279,12 @@ jobs:
             git config --global --add safe.directory /home/$EC2_USER/restaurant-management
           "
 
-          # Step 3.2: Ensure correct ownership and permissions for the entire directory including .git
+          # Step 3.2: Set proper ownership and permissions for the entire project directory
           ssh $EC2_USER@$EC2_HOST "
             sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/.git &&
+            sudo chmod -R 775 ~/restaurant-management/var &&
             sudo chmod -R 775 ~/restaurant-management/var/cache &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
             sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine &&
