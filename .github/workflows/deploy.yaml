@@ -323,6 +323,7 @@ jobs:
             npm run build
           "
 
+
           # Set execute permissions on the necessary directories
           ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
 
