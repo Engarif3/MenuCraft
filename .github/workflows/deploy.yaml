@@ -24,7 +24,7 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install Composer Dependencies
-        run: composer install --no-scripts --no-interaction --prefer-dist
+        run: composer install --no-scripts --no-interaction --prefer-dist --dev
 
       # Step 4: Run static code analysis
       - name: Run PHPStan
@@ -59,25 +59,26 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Pull the latest code from GitHub on EC2
+          # Pull latest code on EC2
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/symfony-app ]; then
               cd ~/symfony-app && git pull origin main;
             else
-              git clone https://github.com/${{ secrets.GITHUB_USERNAME }}/<your-repo>.git ~/symfony-app;
+              git clone https://github.com/<your-username>/<your-repo>.git ~/symfony-app;
             fi
           "
 
-          # Install Composer dependencies and prepare the application
+          # Install dependencies and prepare the application
           ssh $EC2_USER@$EC2_HOST "
             cd ~/symfony-app &&
             composer install --no-dev --optimize-autoloader &&
-            php bin/console cache:clear --env=prod &&
-            # Create the database if it doesn't exist
-            php bin/console doctrine:database:create &&
-            # Apply migrations
+            php bin/console doctrine:database:create --if-not-exists &&
             php bin/console doctrine:migrations:migrate --no-interaction &&
-            # Restore the database from a backup (if needed)
+            php bin/console cache:clear --env=prod
+          "
+
+          # Restore the database from backup (if needed)
+          ssh $EC2_USER@$EC2_HOST "
             mysql -u root -p restaurantManagement < ~/symfony-app/backup.sql
           "
 
