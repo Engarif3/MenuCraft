@@ -277,7 +277,7 @@ jobs:
           # Step 3.1: Set correct permissions for the entire directory
           ssh $EC2_USER@$EC2_HOST "
             # Set permissions for the entire restaurant-management directory
-            "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
+            sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management
           "
 
           # Step 3.2: Pull the latest code
