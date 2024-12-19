@@ -196,6 +196,7 @@
 #             sudo systemctl restart nginx
 #           "
 
+#final
 deploy:
   runs-on: ubuntu-latest
   needs: build
