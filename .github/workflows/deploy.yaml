@@ -61,16 +61,16 @@ jobs:
         run: |
           # Pull latest code on EC2
           ssh $EC2_USER@$EC2_HOST "
-            if [ -d ~/symfony-app ]; then
-              cd ~/symfony-app && git pull origin main;
+            if [ -d ~/restaurant-management ]; then
+              cd ~/restaurant-management && git pull origin main;
             else
-              git clone https://github.com/<your-username>/<your-repo>.git ~/symfony-app;
+              git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
             fi
           "
 
           # Install dependencies and prepare the application
           ssh $EC2_USER@$EC2_HOST "
-            cd ~/symfony-app &&
+            cd ~/restaurant-management &&
             composer install --no-dev --optimize-autoloader &&
             php bin/console cache:clear --env=prod &&
             php bin/console doctrine:migrations:migrate --no-interaction
