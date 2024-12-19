@@ -274,10 +274,14 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Set correct permissions for public/css directory
+          # Set correct permissions for public/css directory (use sudo for permissions)
           ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management/public/css &&
-            sudo chown -R ubuntu:ubuntu ~/restaurant-management/public/css &&
+            sudo chmod -R 777 ~/restaurant-management/public/css &&
+            sudo chown -R ubuntu:ubuntu ~/restaurant-management/public/css
+          "
+
+          # Forcefully remove the tailwind.css file (using sudo)
+          ssh $EC2_USER@$EC2_HOST "
             sudo rm -f ~/restaurant-management/public/css/tailwind.css
           "
 
