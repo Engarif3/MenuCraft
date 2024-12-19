@@ -274,6 +274,13 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
+          # Set correct permissions for public/css directory
+          ssh $EC2_USER@$EC2_HOST "
+            sudo chmod -R 775 ~/restaurant-management/public/css &&
+            sudo chown -R ubuntu:ubuntu ~/restaurant-management/public/css &&
+            sudo rm -f ~/restaurant-management/public/css/tailwind.css
+          "
+
           # Pull latest code on EC2
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
