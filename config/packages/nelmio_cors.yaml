@@ -1,6 +1,8 @@
 nelmio_cors:
   defaults:
     allow_origin: ["http://localhost:5173"] # Replace with your React frontend's origin
+    allow_origin: ["44.204.158.131"] # Replace with your React frontend's origin
+    allow_origin: ["44.204.158.131:5173"] # Replace with your React frontend's origin
     allow_headers: ["Content-Type", "Authorization"]
     allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     max_age: 3600
