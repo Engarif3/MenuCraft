@@ -274,25 +274,14 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Step 3.1: Reset permissions for problematic directories
+          # Step 3.1: Set correct permissions for the entire directory
           ssh $EC2_USER@$EC2_HOST "
-            # Create necessary directories if they don't exist
-            sudo mkdir -p ~/restaurant-management/var/cache/dev &&
-            sudo mkdir -p ~/restaurant-management/var/logs &&
-            
-            # Set correct permissions for cache, logs, and other directories
-            sudo chmod -R 775 ~/restaurant-management/var &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
+            # Set permissions for the entire restaurant-management directory
+            sudo chmod -R 775 ~/restaurant-management &&
+            sudo chown -R www-data:www-data ~/restaurant-management
           "
 
-          # Step 3.2: Pull latest code
+          # Step 3.2: Pull the latest code
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             git reset --hard HEAD &&
@@ -306,17 +295,4 @@ jobs:
             composer install --optimize-autoloader &&
             php bin/console cache:clear --env=prod &&
             php bin/console doctrine:migrations:migrate --no-interaction
-          "
-
-          # Step 3.4: Apply permissions after deployment
-          ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management &&
-            sudo chmod -R 775 ~/restaurant-management/public &&
-            sudo chmod -R 775 ~/restaurant-management/public/uploads &&
-            sudo chown -R www-data:www-data ~/restaurant-management/public/uploads &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
           "
