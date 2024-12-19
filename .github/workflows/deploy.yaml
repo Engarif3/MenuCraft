@@ -199,82 +199,132 @@
 #             sudo systemctl restart nginx
 #           "
 
-deploy:
-  runs-on: ubuntu-latest
-  needs: build
+name: Test and Deploy Symfony App to EC2
 
-  steps:
-    # Step 1: Checkout the repository
-    - name: Checkout Code
-      uses: actions/checkout@v3
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
-    # Step 2: Configure SSH
-    - name: Configure SSH
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    # Step 3: Deploy to EC2
-    - name: Deploy to EC2
-      env:
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-      run: |
-        # Pull latest code on EC2
-        ssh $EC2_USER@$EC2_HOST "
-          if [ -d ~/restaurant-management ]; then
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql
+
+      # Step 3: Install dependencies
+      - name: Install Composer Dependencies
+        run: composer install --no-scripts --no-interaction --prefer-dist
+
+      # Step 4: Run static code analysis with PHPStan
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse src
+
+      # Step 5: Run PHPUnit tests (if needed)
+      #- name: Run PHPUnit Tests
+      #  run: vendor/bin/phpunit --testdox
+
+      # Step 6: Set up Node.js for Tailwind build
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Step 7: Install NPM dependencies
+      - name: Install NPM dependencies
+        run: npm install
+
+      # Step 8: Build Tailwind CSS
+      - name: Build Tailwind CSS
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Configure SSH
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # Step 3: Deploy to EC2
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          # Pull latest code on EC2
+          ssh $EC2_USER@$EC2_HOST "
+            if [ -d ~/restaurant-management ]; then
+              cd ~/restaurant-management &&
+              # Clean the public/build folder to prevent conflicts
+              rm -rf public/build/* &&
+              git pull origin main;
+            else
+              git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
+            fi
+          "
+
+          # Install PHP and Node.js on EC2 (if not already installed)
+          ssh $EC2_USER@$EC2_HOST "
+            # Install Node.js and npm if not already installed
+            if ! command -v npm &> /dev/null; then
+              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
+              sudo apt-get install -y nodejs 
+            fi
+          "
+
+          # Install dependencies and prepare the application (with dev dependencies)
+          ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
-            # Clean the public/build folder to prevent conflicts
-            rm -rf public/build/* &&
-            git pull origin main;
-          else
-            git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
-          fi
-        "
+            composer install --optimize-autoloader &&
+            php bin/console cache:clear --env=prod &&
+            php bin/console doctrine:migrations:migrate --no-interaction
+          "
 
-        # Install PHP and Node.js on EC2 (if not already installed)
-        ssh $EC2_USER@$EC2_HOST "
-          # Install Node.js and npm if not already installed
-          if ! command -v npm &> /dev/null; then
-            curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - 
-            sudo apt-get install -y nodejs 
-          fi
-        "
+          # Build Tailwind CSS (on EC2)
+          ssh $EC2_USER@$EC2_HOST "
+            cd ~/restaurant-management &&
+            npm install &&
+            npm run build
+          "
 
-        # Install dependencies and prepare the application (with dev dependencies)
-        ssh $EC2_USER@$EC2_HOST "
-          cd ~/restaurant-management &&
-          composer install --optimize-autoloader &&
-          php bin/console cache:clear --env=prod &&
-          php bin/console doctrine:migrations:migrate --no-interaction
-        "
+          # Set execute permissions on the necessary directories
+          ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
 
-        # Build Tailwind CSS (on EC2)
-        ssh $EC2_USER@$EC2_HOST "
-          cd ~/restaurant-management &&
-          npm install &&
-          npm run build
-        "
+          # Ensure the app directory has write permissions and create the necessary folders
+          ssh $EC2_USER@$EC2_HOST "
+            sudo mkdir -p ~/restaurant-management/public/build &&
+            sudo chmod -R 775 ~/restaurant-management &&
+            sudo chmod -R 775 ~/restaurant-management/public &&
+            sudo chmod -R 775 ~/restaurant-management/var/cache &&
+            sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
+            sudo chmod -R 775 ~/restaurant-management/var/cache/prod
+          "
 
-        # Set execute permissions on the necessary directories
-        ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
+          # Stop existing PM2 process if it exists
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
 
-        # Ensure the app directory has write permissions and create the necessary folders
-        ssh $EC2_USER@$EC2_HOST "
-          sudo mkdir -p ~/restaurant-management/public/build &&
-          sudo chmod -R 775 ~/restaurant-management &&
-          sudo chmod -R 775 ~/restaurant-management/public &&
-          sudo chmod -R 775 ~/restaurant-management/var/cache &&
-          sudo chmod -R 775 ~/restaurant-management/var/cache/dev &&
-          sudo chmod -R 775 ~/restaurant-management/var/cache/prod
-        "
-
-        # Stop existing PM2 process if it exists
-        ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && pm2 delete restaurant-management || true"
-
-        # Start the application with PM2
-        ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/restaurant-management && pm2 start public/index.php --name restaurant-management"
+          # Start the application with PM2
+          ssh $EC2_USER@$EC2_HOST "export PATH=$PATH:/home/ubuntu/.local/share/fnm/bin && cd ~/restaurant-management && pm2 start public/index.php --name restaurant-management"
