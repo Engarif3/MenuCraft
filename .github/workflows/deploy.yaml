@@ -268,8 +268,10 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # SSH into EC2 to deploy the application
           ssh $EC2_USER@$EC2_HOST "
+            # Navigate to the project directory
+            cd ~/restaurant-management || git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management
+
             # Set correct permissions for the entire directory
             sudo chmod -R 775 ~/restaurant-management &&
             sudo chown -R ubuntu:www-data ~/restaurant-management &&
