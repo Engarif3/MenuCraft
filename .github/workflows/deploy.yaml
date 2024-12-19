@@ -324,7 +324,7 @@ jobs:
           "
 
           # Set execute permissions on the necessary directories
-          ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management/public"
+          ssh $EC2_USER@$EC2_HOST "sudo chmod +x /home/ubuntu && sudo chmod +x /home/ubuntu/restaurant-management"
 
           # Ensure the app directory has write permissions and create the necessary folders
           ssh $EC2_USER@$EC2_HOST "
