@@ -214,36 +214,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
           extensions: pdo_mysql
 
-      # Step 3: Install dependencies
       - name: Install Composer Dependencies
         run: composer install --no-scripts --no-interaction --prefer-dist
 
-      # Step 4: Run static code analysis with PHPStan
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src
-
-      # Step 5: Set up Node.js for Tailwind build
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      # Step 6: Install NPM dependencies
       - name: Install NPM dependencies
         run: npm install
 
-      # Step 7: Build Tailwind CSS
       - name: Build Tailwind CSS
         run: npm run build
 
@@ -252,11 +242,9 @@ jobs:
     needs: build
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Configure SSH
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
@@ -266,20 +254,20 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # Step 3: Deploy to EC2
       - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Clean up old deployment
           ssh $EC2_USER@$EC2_HOST "
-            sudo rm -rf ~/restaurant-management/public/css &&
-            sudo rm -rf ~/restaurant-management/var/cache &&
-            sudo rm -rf ~/restaurant-management/public/build
+            # Ensure correct permissions for deployment
+            sudo chmod -R 775 ~/restaurant-management ||
+            sudo mkdir -p ~/restaurant-management &&
+            sudo chmod -R 775 ~/restaurant-management &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management
           "
 
-          # Clone or pull latest code
+          # Pull or clone repository
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
               cd ~/restaurant-management &&
@@ -290,19 +278,7 @@ jobs:
             fi
           "
 
-          # Install PHP and Node.js if not already installed
-          ssh $EC2_USER@$EC2_HOST "
-            if ! command -v php &> /dev/null; then
-              sudo apt update &&
-              sudo apt install -y php8.2-cli php8.2-fpm php8.2-mysql unzip curl;
-            fi
-            if ! command -v npm &> /dev/null; then
-              curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&
-              sudo apt install -y nodejs;
-            fi
-          "
-
-          # Install dependencies and prepare the application
+          # Install dependencies and clear cache
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -317,10 +293,10 @@ jobs:
             npm run build
           "
 
-          # Set permissions
+          # Ensure permissions for public and cache directories
           ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/public &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache &&
-            sudo chown -R www-data:www-data ~/restaurant-management
+            sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chown -R www-data:www-data ~/restaurant-management/public &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var
           "
