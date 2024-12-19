@@ -207,13 +207,53 @@ on:
       - "main"
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Step 2: Set up PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql
+
+      # Step 3: Install dependencies
+      - name: Install Composer Dependencies
+        run: composer install --no-scripts --no-interaction --prefer-dist
+
+      # Step 4: Run static code analysis with PHPStan
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse src
+
+      # Step 5: Install Node.js for Tailwind CSS build
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Step 6: Install NPM dependencies
+      - name: Install NPM dependencies
+        run: npm install
+
+      # Step 7: Build Tailwind CSS
+      - name: Build Tailwind CSS
+        run: npm run build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Configure SSH for EC2 deployment
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
@@ -223,12 +263,13 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+      # Step 3: Deploy to EC2
       - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Reset permissions for problematic directories
+          # Step 3.1: Reset permissions for problematic directories
           ssh $EC2_USER@$EC2_HOST "
             sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public &&
@@ -236,7 +277,7 @@ jobs:
             sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var
           "
 
-          # Pull latest code safely
+          # Step 3.2: Pull latest code
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             git reset --hard HEAD &&
@@ -244,7 +285,7 @@ jobs:
             git pull origin main
           "
 
-          # Rebuild and reset permissions
+          # Step 3.3: Install dependencies and clear cache
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -252,10 +293,17 @@ jobs:
             php bin/console doctrine:migrations:migrate --no-interaction
           "
 
-          # Reapply permissions after deployment
+          # Step 3.4: Apply permissions after deployment
           ssh $EC2_USER@$EC2_HOST "
             sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/public &&
             sudo chmod -R 775 ~/restaurant-management/public/uploads &&
             sudo chown -R www-data:www-data ~/restaurant-management/public/uploads
+          "
+
+          # Step 3.5: Restart the application (if applicable)
+          ssh $EC2_USER@$EC2_HOST "
+            export PATH=\$PATH:/home/ubuntu/.local/share/fnm/bin &&
+            pm2 delete restaurant-management || true &&
+            pm2 start public/index.php --name restaurant-management
           "
