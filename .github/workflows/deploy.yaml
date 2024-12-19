@@ -259,6 +259,16 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
+          # Connect to EC2 instance and reset permissions
+          ssh $EC2_USER@$EC2_HOST "
+            # Ensure permissions for public/build
+            sudo rm -rf ~/restaurant-management/public/build &&
+            sudo mkdir -p ~/restaurant-management/public/build &&
+            sudo chmod -R 775 ~/restaurant-management/public/build &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public/build
+          "
+
+          # Pull the latest code
           ssh $EC2_USER@$EC2_HOST "
             if [ -d ~/restaurant-management ]; then
               cd ~/restaurant-management &&
@@ -269,12 +279,7 @@ jobs:
             fi
           "
 
-          # Ensure permissions for public/build directory
-          ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management/public/build &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public/build
-          "
-
+          # Install dependencies and build the application
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -282,19 +287,18 @@ jobs:
             php bin/console doctrine:migrations:migrate --no-interaction
           "
 
+          # Build Tailwind CSS on EC2
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             npm install &&
             npm run build
           "
 
+          # Set proper permissions for deployment
           ssh $EC2_USER@$EC2_HOST "
-            sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/public &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache &&
-            sudo chmod -R 775 ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var &&
-            sudo chown -R www-data:www-data ~/restaurant-management/public &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache &&
-            sudo chown -R www-data:www-data ~/restaurant-management/var/cache/dev/doctrine/orm/Proxies
+            sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chmod -R 775 ~/restaurant-management/public/build &&
+            sudo chown -R www-data:www-data ~/restaurant-management/public/build
           "
