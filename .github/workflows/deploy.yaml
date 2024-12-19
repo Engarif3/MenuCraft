@@ -205,41 +205,10 @@ on:
   push:
     branches:
       - "main"
-  pull_request:
-    branches:
-      - "main"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          extensions: pdo_mysql
-
-      - name: Install Composer Dependencies
-        run: composer install --no-scripts --no-interaction --prefer-dist
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Install NPM dependencies
-        run: npm install
-
-      - name: Build Tailwind CSS
-        run: npm run build
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - name: Checkout Code
@@ -259,27 +228,23 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Connect to EC2 instance and reset permissions
+          # Reset permissions for problematic directories
           ssh $EC2_USER@$EC2_HOST "
-            # Ensure permissions for public/build
-            sudo rm -rf ~/restaurant-management/public/build &&
-            sudo mkdir -p ~/restaurant-management/public/build &&
-            sudo chmod -R 775 ~/restaurant-management/public/build &&
-            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public/build
+            sudo chmod -R 775 ~/restaurant-management/public &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/public &&
+            sudo chmod -R 775 ~/restaurant-management/var &&
+            sudo chown -R $EC2_USER:$EC2_USER ~/restaurant-management/var
           "
 
-          # Pull the latest code
+          # Pull latest code safely
           ssh $EC2_USER@$EC2_HOST "
-            if [ -d ~/restaurant-management ]; then
-              cd ~/restaurant-management &&
-              git stash --include-untracked &&
-              git pull origin main;
-            else
-              git clone https://github.com/Engarif3/restaurant-management.git ~/restaurant-management;
-            fi
+            cd ~/restaurant-management &&
+            git reset --hard HEAD &&
+            git stash --include-untracked &&
+            git pull origin main
           "
 
-          # Install dependencies and build the application
+          # Rebuild and reset permissions
           ssh $EC2_USER@$EC2_HOST "
             cd ~/restaurant-management &&
             composer install --optimize-autoloader &&
@@ -287,18 +252,10 @@ jobs:
             php bin/console doctrine:migrations:migrate --no-interaction
           "
 
-          # Build Tailwind CSS on EC2
-          ssh $EC2_USER@$EC2_HOST "
-            cd ~/restaurant-management &&
-            npm install &&
-            npm run build
-          "
-
-          # Set proper permissions for deployment
+          # Reapply permissions after deployment
           ssh $EC2_USER@$EC2_HOST "
             sudo chmod -R 775 ~/restaurant-management &&
             sudo chmod -R 775 ~/restaurant-management/public &&
-            sudo chmod -R 775 ~/restaurant-management/var &&
-            sudo chmod -R 775 ~/restaurant-management/public/build &&
-            sudo chown -R www-data:www-data ~/restaurant-management/public/build
+            sudo chmod -R 775 ~/restaurant-management/public/uploads &&
+            sudo chown -R www-data:www-data ~/restaurant-management/public/uploads
           "
