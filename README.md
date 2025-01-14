@@ -19,6 +19,7 @@ This backend is a part of full-stack application **Restaurant Management** consi
 - **Node.js**: For installing npm packages.
 - **Docker**: Containerization of the application.
 - **Docker Compose**: Managing and orchestrating multiple containers.
+
 <!-- - **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight) -->
 
 ## Prerequisites
