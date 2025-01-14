@@ -64,6 +64,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    if: steps.check_readme.outputs.result != 'README.md changed'
 
     steps:
       # Step 1: Checkout the repository
