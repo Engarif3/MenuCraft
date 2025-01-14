@@ -2,7 +2,7 @@
 
 ## Overview
 
-This backend is a part of full-stack application \*\*Restaurant Management" consists of a separate Backend (Menu Craft) built with Symfony and MariaDB, and a Frontend ([Bistro Delight](https://github.com/Engarif3/Bistro_delight_aws)) developed by using React JS. The frontend communicates with the backend via RESTful APIs.
+This backend is a part of full-stack application **Restaurant Management** consists of a separate Backend (**Menu Craft**) built with Symfony and MariaDB, and a Frontend ([Bistro Delight](https://github.com/Engarif3/Bistro_delight_aws)) developed by using React JS. The frontend communicates with the backend via RESTful APIs.
 
 ## Features
 
@@ -14,6 +14,7 @@ This backend is a part of full-stack application \*\*Restaurant Management" cons
 
 - Admin can manage dishes (create/edit/delete dishes).
 - Admin can manage categories (create/edit/delete categories).
+- REST APIs for communication with the frontend.
 - Dockerized setup for development and production environments.
 - MariaDB database integration.
 
@@ -119,6 +120,5 @@ API Base URL: http://localhost:8000 or http://0.0.0.0:8000
 
 For any inquiries or issues, feel free to reach out:
 
-- **Name:** Md. Arifur Rahman
 - **Email:** [arif.aust.eng@gmail.com](mailto:arif.aust.eng@gmail.com)
 - **LinkedIn:** [Md. Arifur Rahman](https://www.linkedin.com/in/engarif3/)
