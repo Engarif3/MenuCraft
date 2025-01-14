@@ -165,7 +165,7 @@ class DishesController extends AbstractController
     }
 
 
-    // Route to delete dish
+    // Route to delete dishes
     #[Route('/dish/{id}/delete', name: 'app_dish_delete')]
     public function delete(int $id, EntityManagerInterface $entityManager): Response
     {
