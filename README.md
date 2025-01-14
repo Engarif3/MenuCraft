@@ -10,7 +10,7 @@ This backend is a part of full-stack application **Restaurant Management** consi
 - Admin can manage categories (create/edit/delete categories).
 - REST APIs for communication with the frontend.
 - Dockerized setup for development and production environments.
-- MariaDB database integration.
+- MariaDB database integration..
 
 ## Technologies Used
 
@@ -19,7 +19,6 @@ This backend is a part of full-stack application **Restaurant Management** consi
 - **Node.js**: For installing npm packages.
 - **Docker**: Containerization of the application.
 - **Docker Compose**: Managing and orchestrating multiple containers.
-
 <!-- - **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight) -->
 
 ## Prerequisites
