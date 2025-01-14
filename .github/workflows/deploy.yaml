@@ -4,12 +4,11 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "!README.md"
       - "**/*"
+
   pull_request:
     branches: ["main"]
     paths:
-      - "!README.md"
       - "**/*"
 
 jobs:
@@ -20,6 +19,20 @@ jobs:
       # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      # readme skipping starts
+      # Step 2: Check if only README.md was changed
+      - name: Check for README.md changes
+        id: check_readme
+        run: |
+          echo "Checking if README.md has been changed..."
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "README.md" && echo "README.md changed" || echo "Other files changed"
+
+      # Step 3: Skip CI/CD if only README.md was changed
+      - name: Skip if only README.md was changed
+        if: steps.check_readme.outputs.result == 'README.md changed'
+        run: echo "Skipping CI/CD pipeline as only README.md was modified."
+      # readme skipping ends
 
       # Step 2: Set up PHP
       - name: Setup PHP
