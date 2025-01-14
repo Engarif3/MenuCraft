@@ -3,8 +3,14 @@ name: Test and Deploy Symfony App to EC2
 on:
   push:
     branches: ["main"]
+    paths:
+      - "**/*"
+      - "!README.md"
   pull_request:
     branches: ["main"]
+    paths:
+      - "**/*"
+      - "!README.md"
 
 jobs:
   build:
@@ -45,7 +51,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ github.event.head_commit.message != 'Update README.md' }}
 
     steps:
       # Step 1: Checkout the repository
