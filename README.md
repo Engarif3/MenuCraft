@@ -6,12 +6,6 @@ This backend is a part of full-stack application **Restaurant Management** consi
 
 ## Features
 
-<!-- Customers can:
-- Browse the restaurant menu
-- Add items to their cart
-- Modify item quantities
-- Place orders -->
-
 - Admin can manage dishes (create/edit/delete dishes).
 - Admin can manage categories (create/edit/delete categories).
 - REST APIs for communication with the frontend.
