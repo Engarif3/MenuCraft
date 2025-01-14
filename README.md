@@ -1,55 +1,104 @@
-# Restaurant Management System (Backend)
+# MenuCraft (Symfony-MariaDB)
 
-A RESTful API built with Symfony to manage restaurant operations, including handling dishes, categories. This backend is dockerized for seamless setup and integrates with a React frontend for a complete user experience.
+## Overview
+
+This backend is a part of full-stack application \*\*Restaurant Management" consists of a separate Backend (Menu Craft) built with Symfony and MariaDB, and a Frontend ([Bistro Delight](https://github.com/Engarif3/Bistro_delight_aws)) developed by using React JS. The frontend communicates with the backend via RESTful APIs.
 
 ## Features
 
-- CRUD operations for dishes and categories
-- RESTful API implementation for front-end
-- Dockerized setup for development and production environments
-- MariaDB database integration
+<!-- Customers can:
+- Browse the restaurant menu
+- Add items to their cart
+- Modify item quantities
+- Place orders -->
 
-## Tech Stack
+- Admin can manage dishes (create/edit/delete dishes).
+- Admin can manage categories (create/edit/delete categories).
+- Dockerized setup for development and production environments.
+- MariaDB database integration.
 
-- **Backend Framework**: Symfony 6.4
-- **Database**: MariaDB 10.4
-- **Containerization**: Docker
-- **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight)
-- **API Testing**: Postman or similar tools
+## Technologies Used
+
+- **Symfony**: Backend framework for application logic.
+- **MariaDB**: Database management system.
+- **Node.js**: For installing npm packages.
+- **Docker**: Containerization of the application.
+- **Docker Compose**: Managing and orchestrating multiple containers.
+<!-- - **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight) -->
 
 ## Prerequisites
 
-Ensure you have the following installed (If running on local machine instead of container):
+- **Option 1**: Run locally:
 
-- [PHP](https://www.php.net/)
-- [Symfony](https://symfony.com/)
-- [Docker](https://www.docker.com/)
-- [Composer](https://getcomposer.org/)
-- [Node.js](https://nodejs.org/) (if using for frontend)
+  - PHP 8.1 installed.
+  - Node 18.18 installed.
+  - Composer installed.
+  - MariaDB server installed and running.
+
+- **Option 2**: Run with Docker:
+  - Docker and Docker Compose installed on your system.
 
 ## Getting Started
 
-### 1. Clone the Repository
+### Running Locally
 
-```bash
-git clone <paste repo link here >
-cd restaurant-management
-```
+1. Clone the repository:
 
-### 2. Build and Start Containers
+   ```bash
+   git clone <Repo URL>
+   cd <repository-folder>
+   ```
 
-```bash
-docker compose up
+2. Install dependencies:
 
-```
+   ```bash
+   composer install
+   npm install
+   ```
 
-### 3. Access the Application
+3. Set up the `.env` file with your local database credentials.
 
-API Base URL: http://0.0.0.0:8000 or http://localhost:8000
+4. Run the application using one of the following commands:
+
+   ```bash
+   php -S localhost:8000 -t public
+   ```
+
+   or
+
+   ```bash
+   symfony server:start
+   ```
+
+5. Access the Symfony application locally:
+   ```
+   http://localhost:8000 or 127.0.0.1:8000
+   ```
+   or the URL provided by the Symfony CLI.
+
+### Running with Docker
+
+1. Clone the repository:
+
+   ```bash
+   git clone <Repo URL>
+   cd <repository-folder>
+   ```
+
+2. Start the application using Docker Compose:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. Access the Symfony application locally:
+   ```
+   http://localhost:8000 or http://0.0.0.0:8000
+   ```
 
 ### 4. API Endpoints
 
-API Base URL: http://0.0.0.0:8000 or http://localhost:8000
+API Base URL: http://localhost:8000 or http://0.0.0.0:8000
 
 | HTTP Method | Endpoint                | Description                                                  |
 | ----------- | ----------------------- | ------------------------------------------------------------ |
