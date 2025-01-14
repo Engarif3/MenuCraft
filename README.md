@@ -18,7 +18,7 @@ This backend is a part of full-stack application **Restaurant Management** consi
 - **MariaDB**: Database management system.
 - **Node.js**: For installing npm packages.
 - **Docker**: Containerization of the application.
-- **Docker Compose**: Managing and orchestrating multiple containers..
+- **Docker Compose**: Managing and orchestrating multiple containers...
 
 <!-- - **Frontend**: [Front-end repository](https://github.com/Engarif3/Bistro-delight) -->
 
