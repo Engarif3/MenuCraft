@@ -1,23 +1,12 @@
 nelmio_cors:
-  defaults:
-    allow_origin: [
-        "http://localhost:5173",
-        "http://44.204.158.131",
-        "http://44.204.158.131:5173",
-        "https://bistro-delight-aws.netlify.app",
-      ] # Replace with your React frontend's origin
-    allow_headers: ["Content-Type", "Authorization"]
-    allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    max_age: 3600
-  paths:
-    "^/api/":
-      allow_origin:
-        [
-          "http://localhost:5173",
-          "http://44.204.158.131",
-          "http://44.204.158.131:5173",
-          "https://bistro-delight-aws.netlify.app",
-        ]
-      allow_headers: ["Content-Type", "Authorization"]
-      allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-      max_age: 3600
+    defaults:
+        allow_origin: ['*'] # Temporarily allow all origins for testing
+        allow_headers: ['*']
+        allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+        max_age: 3600
+    paths:
+        '^/api/':
+            allow_origin: ['*'] # Temporarily allow all
+            allow_headers: ['*']
+            allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+            max_age: 3600
