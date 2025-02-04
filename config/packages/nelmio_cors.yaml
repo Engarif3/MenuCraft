@@ -1,12 +1,11 @@
+# config/packages/nelmio_cors.yaml
 nelmio_cors:
     defaults:
-        allow_origin: ['*'] # Temporarily allow all origins for testing
+        allow_origin: ['https://bistro-delight-aws.netlify.app']
         allow_headers: ['*']
         allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-        max_age: 3600
     paths:
-        '^/api/':
-            allow_origin: ['*'] # Temporarily allow all
+        '^/': # Applies to all routes (API and images)
+            allow_origin: ['https://bistro-delight-aws.netlify.app']
             allow_headers: ['*']
             allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-            max_age: 3600
