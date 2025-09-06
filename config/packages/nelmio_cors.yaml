@@ -1,11 +1,13 @@
 # config/packages/nelmio_cors.yaml
 nelmio_cors:
-    defaults:
-        allow_origin: ['https://bistro-delight-aws.netlify.app']
-        allow_headers: ['*']
-        allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    paths:
-        '^/': # Applies to all routes (API and images)
-            allow_origin: ['https://bistro-delight-aws.netlify.app']
-            allow_headers: ['*']
-            allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  defaults:
+    allow_origin:
+      ["https://bistro-delight-aws.netlify.app", "http://localhost:5173"]
+    allow_headers: ["*"]
+    allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+  paths:
+    "^/": # Applies to all routes (API and images)
+      allow_origin:
+        ["https://bistro-delight-aws.netlify.app", "http://localhost:5173"]
+      allow_headers: ["*"]
+      allow_methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
