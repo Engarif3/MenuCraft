@@ -17,7 +17,18 @@ use App\Repository\CategoryRepository;
 class DishesController extends AbstractController
 {
     // Display the list of dishes
+    // #[Route('/dishes', name: 'app_dishes')]
+    // public function index(EntityManagerInterface $entityManager): Response
+    // {
+    //     $dishes = $entityManager->getRepository(Dish::class)->findAll();
+
+    //     return $this->render('dish/list.html.twig', [
+    //         'dishes' => $dishes,
+    //     ]);
+    // }
+
     #[Route('/dishes', name: 'app_dishes')]
+    #[Route('/', name: 'homepage')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $dishes = $entityManager->getRepository(Dish::class)->findAll();
@@ -26,6 +37,7 @@ class DishesController extends AbstractController
             'dishes' => $dishes,
         ]);
     }
+
 
 
     // #[Route('/dish/create', name: 'app_dish_create')]
