@@ -1,15 +1,10 @@
-# Use official PHP image
 FROM php:8.2-cli
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# System deps + PostgreSQL extension
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    unzip \
-    git \
-    curl \
+    libpq-dev unzip git curl \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Install Composer
@@ -18,11 +13,15 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy project
 COPY . .
 
-# Install PHP dependencies
+# Install PHP deps
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port (Render uses this)
+# Clear & warmup cache
+RUN php bin/console cache:clear --env=prod --no-debug
+RUN php bin/console cache:warmup --env=prod
+
+# Expose port for Render
 EXPOSE 10000
 
-# Start Symfony built-in server
+# Start Symfony
 CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
