@@ -16,7 +16,7 @@ if (!\class_exists(App_KernelDevDebugContainer::class, false)) {
 
 return new \ContainerOcxzyvm\App_KernelDevDebugContainer([
     'container.build_hash' => 'Ocxzyvm',
-    'container.build_id' => 'a3e0b285',
-    'container.build_time' => 1757187688,
+    'container.build_id' => 'a312a0ea',
+    'container.build_time' => 1757196045,
     'container.runtime_mode' => \in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true) ? 'web=0' : 'web=1',
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerOcxzyvm');

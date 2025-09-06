@@ -11,6 +11,7 @@ return [
         '/category' => [[['_route' => 'category_list', '_controller' => 'App\\Controller\\CategoryController::list'], null, null, null, false, false, null]],
         '/category/create' => [[['_route' => 'category_create', '_controller' => 'App\\Controller\\CategoryController::create'], null, null, null, false, false, null]],
         '/dishes' => [[['_route' => 'app_dishes', '_controller' => 'App\\Controller\\DishesController::index'], null, null, null, false, false, null]],
+        '/' => [[['_route' => 'homepage', '_controller' => 'App\\Controller\\DishesController::index'], null, null, null, false, false, null]],
         '/dish/create' => [[['_route' => 'app_dish_create', '_controller' => 'App\\Controller\\DishesController::create'], null, null, null, false, false, null]],
         '/api/dishes' => [[['_route' => 'api_dishes', '_controller' => 'App\\Controller\\DishesController::dishes_list'], null, ['GET' => 0], null, false, false, null]],
     ],
