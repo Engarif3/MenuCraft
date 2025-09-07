@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Curl Render app
-        run: curl -fs --max-time 10 https://menucrafts.onrender.com || true
+        run: curl -fs --max-time 10 https://menucrafts.onrender.com/health || true
