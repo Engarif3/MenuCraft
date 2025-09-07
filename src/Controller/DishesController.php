@@ -218,4 +218,11 @@ class DishesController extends AbstractController
         // Return the data as a JSON response
         return new JsonResponse($dishesData);
     }
+
+    // Health check endpoint to keep the app awake
+    #[Route('/health', name: 'health_check')]
+    public function healthCheck(): Response
+    {
+        return new Response('OK', Response::HTTP_OK);
+    }
 }
